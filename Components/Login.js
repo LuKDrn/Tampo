@@ -28,19 +28,17 @@ class Login extends React.Component {
             <View style={styles.container}>
                 <StatusBar backgroundColor='#14142d' barStyle="light-content" />
                 <Text style={styles.welcome}>Bienvenue sur Tampo</Text>
-                <Text style={styles.welcomeSmall}>Collaborez avec d'autres musiciens </Text>
+                <Text style={styles.welcomeSmall}>Découvrez, connectez et collaborez entre musiciens</Text>
                 <Image source={require('../Images/Logo_complete.png')} style={styles.logo} />
-                <TextInput style={styles.textInput} placeholder="Adresse mail " 
+                <TextInput style={styles.textInput} placeholder="Adresse mail " placeholderTextColor="#FFF"
                     onChangeText={(username) => this.setState({ username })} 
                     value={this.state.username} 
                     autoCapitalize='none'/>
-                <TextInput style={styles.textInput} placeholder="Mot de passe " secureTextEntry onChangeText={(password) => this.setState({ password })} value={this.state.password}/>
-                <View style={styles.btnContainer}>
+                <TextInput style={styles.textInput} placeholder="Mot de passe " placeholderTextColor="#FFF" secureTextEntry onChangeText={(password) => this.setState({ password })} value={this.state.password}/>
                     <TouchableOpacity style={styles.userBtnLogIn} onPress={this._login}>
                         <Text style={styles.textBtn}>Se connecter </Text>
                     </TouchableOpacity>
-                </View>
-                <View style={styles.btnContainer2}>
+                <View style={styles.btnContainer}>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('Register')}>
                         <Text style={styles.textBtnCreate}>Pas encore de compte ? </Text>
                         <Text style={styles.textBtnCreate}>Creer un compte </Text>
@@ -77,27 +75,22 @@ const styles = StyleSheet.create({
         margin: 5
     },
     textInput: {
-        width: '90%',
-        padding: 15,
-        margin: 10,
-        backgroundColor: '#FFF',
-        borderRadius: 15
-    },
-    btnContainer: {
-        width: '100%',
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        alignItems: 'center',
+        width: '80%',
+        height: 40,
+        color: "#FFF",
+        marginBottom: 40,
+        paddingBottom: 5,
+        borderBottomWidth: 1,
+        borderBottomColor: '#FFF'
     },
     userBtnLogIn: {
         backgroundColor: '#643c94',
         color: '#FFF',
         padding: 15,
         marginTop: 5,
-        marginBottom: 25,
-        borderRadius: 15
+        marginBottom: 20,
     },
-    btnContainer2: {
+    btnContainer: {
         width: '100%',
         flexDirection: 'column',
         alignItems: 'center',
@@ -111,7 +104,7 @@ const styles = StyleSheet.create({
     textBtnCreate: {
         color: '#FFF',
         fontWeight: 'bold',
-        fontSize: 20,
+        fontSize: 13 ,
         textAlign: 'center',
         marginVertical: 2
     }

@@ -15,11 +15,7 @@ const AppStack = createStackNavigator({
                 height: 80,
                 backgroundColor: '#14142d'
             },
-            headerTintColor: '#FFF',
-            headerTitleStyle: {
-                textAlign: 'center',
-                flex: 1
-            }
+            headerTintColor: '#FFF'
         },
     }
 })
