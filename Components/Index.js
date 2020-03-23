@@ -1,17 +1,30 @@
 import React from 'react'
-import {View, Button, StyleSheet, AsyncStorage } from 'react-native'
+import {View,Text, StyleSheet } from 'react-native'
+import * as firebase from 'firebase'
+import { TouchableOpacity } from 'react-native-gesture-handler';
+
 
 class Index extends React.Component {
+    state = {
+        email: "",
+        displayName: ""
+    };
 
-    _logOut = async() => {
-        await AsyncStorage.clear();
-        this.props.navigation.navigate('Auth');
+    componentDidMount(){
+        const {email, displayName} = firebase.auth().currentUser;
+        this.setState({ email, displayName});
     }
+    signOutUser = () => {
+        firebase.auth().signOut();
+    };
 
     render(){
         return (
             <View style={styles.container}>
-                <Button onPress={this._logOut} title="Se déconnecter" />
+                <Text style={{color: "#FFF", fontWeight: "bold", fontSize: 16}}>Bienvenue {this.state.displayName} ! </Text>
+                <TouchableOpacity style={styles.row} onPress={this.signOutUser}>
+                    <Text style={{color: "#E616E6"}}>Se déconnecter</Text>
+                </TouchableOpacity>
             </View>
         )
     }
@@ -20,9 +33,17 @@ class Index extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: "center",
+        justifyContent: "center",
         backgroundColor: '#14142d'
+    },
+    row : {
+        flex: 1,
+        flexDirection: 'row',
+        height: 70,
+        paddingVertical: 2,
+        justifyContent:'flex-end',
+        alignItems: 'flex-start'
     }
 })
 export default Index

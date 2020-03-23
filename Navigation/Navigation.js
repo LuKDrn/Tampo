@@ -5,20 +5,32 @@ import { createAppContainer, createSwitchNavigator } from 'react-navigation'
 import Login from '../Components/Login'
 import Index from '../Components/Index'
 import Register from '../Components/Register'
+import Loading from '../Components/Loading'
+
+import * as firebase from 'firebase'
+
+var firebaseConfig = {
+    apiKey: "AIzaSyC5mBmYcaZywjWq2kKFQrNR4wlS_wnHu4o",
+    authDomain: "tampo-41ba7.firebaseapp.com",
+    databaseURL: "https://tampo-41ba7.firebaseio.com",
+    projectId: "tampo-41ba7",
+    storageBucket: "tampo-41ba7.appspot.com",
+    messagingSenderId: "815374756118",
+    appId: "1:815374756118:web:cfb7be8850379aa668c837",
+    measurementId: "G-GJPWTJYBVP"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
 
 const AppStack = createStackNavigator({
     Index: { //Ici la vue "Index est appel�, c'est la premi�re vue affich� apr�s connexion
         screen: Index,
         navigationOptions: {
-            title: 'Tampo',
-            headerStyle: {
-                height: 80,
-                backgroundColor: '#14142d'
+            headerShown: false
             },
             headerTintColor: '#FFF'
         },
-    }
-})
+    })
 const AuthStack = createStackNavigator({
     Connexion: { // Ici j'ai appel� la vue "Login".
     screen: Login,
@@ -43,41 +55,14 @@ Register: { // Ici j'ai appel� la vue "Register".
 },
 })
 
-class AuthLoadingScreen extends React.Component {
-    constructor(props){
-        super(props);
-        this._loadData();
-    }
-    
-    _loadData = async() => {
-        const isLoggedIn = await AsyncStorage.getItem('isLoggedIn');
-        this.props.navigation.navigate(isLoggedIn !== '1'? 'Auth' : 'App');
-    }
-    render(){
-        return(
-            <View style={styles.container}>
-                <ActivityIndicator/>
-                <StatusBar barStyle='default'/>
-            </View>
-        )
-    }
-}
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#14142d'
-    }
-})
-
-export default createAppContainer(createSwitchNavigator(
+export default createAppContainer(
+    createSwitchNavigator(
     {
-        AuthLoading: AuthLoadingScreen,
+        Loading : Loading,
         App: AppStack,
         Auth: AuthStack,
     },
     {
-        initialRouteName: 'AuthLoading',
+        initialRouteName: 'Loading',
     }
 ));
