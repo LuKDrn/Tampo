@@ -1,5 +1,5 @@
 import React from 'react'
-import {View,Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, LayoutAnimation } from 'react-native'
 import * as firebase from 'firebase'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
@@ -10,20 +10,22 @@ class Index extends React.Component {
         displayName: ""
     };
 
-    componentDidMount(){
-        const {email, displayName} = firebase.auth().currentUser;
-        this.setState({ email, displayName});
+    componentDidMount() {
+        const { email, displayName } = firebase.auth().currentUser;
+        this.setState({ email, displayName });
     }
     signOutUser = () => {
         firebase.auth().signOut();
     };
 
-    render(){
+    render() {
+        LayoutAnimation.easeInEaseOut();
+        
         return (
             <View style={styles.container}>
-                <Text style={{color: "#FFF", fontWeight: "bold", fontSize: 16}}>Bienvenue {this.state.displayName} ! </Text>
-                <TouchableOpacity style={styles.row} onPress={this.signOutUser}>
-                    <Text style={{color: "#E616E6"}}>Se déconnecter</Text>
+                <Text style={{ color: "#FFF", fontWeight: "bold", fontSize: 16 }}>Bienvenue {this.state.displayName} ! </Text>
+                <TouchableOpacity onPress={this.signOutUser}>
+                    <Text style={{ color: "#E616E6" }}>Se déconnecter</Text>
                 </TouchableOpacity>
             </View>
         )
@@ -37,12 +39,12 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         backgroundColor: '#14142d'
     },
-    row : {
+    row: {
         flex: 1,
         flexDirection: 'row',
         height: 70,
         paddingVertical: 2,
-        justifyContent:'flex-end',
+        justifyContent: 'flex-end',
         alignItems: 'flex-start'
     }
 })

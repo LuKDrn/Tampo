@@ -3,18 +3,18 @@ import { Text, StyleSheet, View, TouchableOpacity, TextInput, Image, StatusBar, 
 import * as firebase from 'firebase'
 class Login extends React.Component {
     state = {
-            email: '',
-            password: '',
-            errorMessage: null    
+        email: '',
+        password: '',
+        errorMessage: null
     };
 
     handleLogin = () => {
-        const { email, password} = this.state
+        const { email, password } = this.state
 
         firebase
-        .auth()
-        .signInWithEmailAndPassword(email, password)
-        .catch(error => this.setState({errorMessage: error.message}));
+            .auth()
+            .signInWithEmailAndPassword(email, password)
+            .catch(error => this.setState({ errorMessage: error.message }));
     };
 
     componentDidMount() {
@@ -34,24 +34,29 @@ class Login extends React.Component {
                 </View>
 
                 <View style={styles.form}>
-                    <TextInput style={styles.textInput} placeholder="Adresse mail " placeholderTextColor="#FFF"
-                        onChangeText={(email) => this.setState({ email })}
-                        value={this.state.email}
-                        autoCapitalize='none' />
-                    <TextInput style={styles.textInput} placeholder="Mot de passe " placeholderTextColor="#FFF" secureTextEntry 
-                    onChangeText={(password) => this.setState({ password })} 
-                    value={this.state.password} />
-                </View>
-                    <TouchableOpacity style={styles.userBtnLogIn} onPress={this.handleLogin}>
-                        <Text style={styles.textBtn}>Se connecter </Text>
-                    </TouchableOpacity>
-                    <View style={styles.btnContainer}>
-                        <TouchableOpacity onPress={() => this.props.navigation.navigate('Register')}>
-                            <Text style={styles.textBtnCreate}>Pas encore de compte ? </Text>
-                            <Text style={styles.textBtnCreate,{ color: "#E616E6", textAlign: 'center', fontWeight: 'bold'}}>Creer un compte </Text>
-                        </TouchableOpacity>
+                    <View>
+                        <Text style={styles.inputTitle}>Adresse mail</Text>
+                        <TextInput style={styles.input}
+                            onChangeText={(email) => this.setState({ email })}
+                            value={this.state.email}
+                            autoCapitalize='none' />
                     </View>
-
+                    <View style={{ marginTop: 32 }}>
+                        <Text style={styles.inputTitle}>Mot de passe</Text>
+                        <TextInput style={styles.input} secureTextEntry
+                            onChangeText={(password) => this.setState({ password })}
+                            value={this.state.password} />
+                    </View>
+                </View>
+                <TouchableOpacity style={styles.userBtnLogIn} onPress={this.handleLogin}>
+                    <Text style={styles.textBtn}>Se connecter </Text>
+                </TouchableOpacity>
+                <View style={styles.btnContainer}>
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Register')}>
+                        <Text style={styles.textBtnCreate}>Pas encore de compte ? </Text>
+                        <Text style={styles.textBtnCreate, { color: "#E616E6", textAlign: 'center', fontWeight: 'bold' }}>Creer un compte </Text>
+                    </TouchableOpacity>
+                </View>
             </SafeAreaView>
         )
     }
@@ -61,16 +66,16 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#11152F',
         alignItems: 'center',
+        justifyContent: 'center'
     },
     logo: {
         height: 130,
         width: "90%",
-        marginVertical: 32
     },
     errorMessage: {
         height: 30
     },
-    error :{
+    error: {
         color: "#E616E6",
         fontSize: 16,
         fontWeight: "bold",
@@ -81,13 +86,18 @@ const styles = StyleSheet.create({
         marginHorizontal: 30,
         width: '80%',
     },
-    textInput: {
-        height: 40,
+    inputTitle: {
         color: "#FFF",
-        marginBottom: 20,
-        paddingBottom: 5,
-        borderBottomWidth: 1,
-        borderBottomColor: '#FFF'
+        fontSize: 12,
+        textTransform: "uppercase"
+    },
+    input: {
+        height: 40,
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderBottomColor: '#FFF',
+        fontSize: 18,
+        color: '#E616E6',
+        fontWeight: 'bold'
     },
     userBtnLogIn: {
         width: '80%',

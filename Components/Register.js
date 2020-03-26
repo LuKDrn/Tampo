@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, TouchableOpacity, TextInput, Text, StyleSheet, SafeAreaView } from 'react-native';
+import { View, TouchableOpacity, TextInput, Text, StyleSheet, SafeAreaView, StatusBar, LayoutAnimation } from 'react-native';
+import { Ionicons } from '@expo/vector-icons'
 import * as firebase from 'firebase';
 
 export default class Register extends React.Component {
@@ -23,32 +24,54 @@ export default class Register extends React.Component {
     };
 
     render() {
+        LayoutAnimation.easeInEaseOut();
+
         return (
             <SafeAreaView style={styles.container}>
-                <Text style={styles.header}>{`Salut ! \n Créer un compte pour commencer.`}</Text>
+                <StatusBar barStyle="light-content"></StatusBar>
+
+                <TouchableOpacity style={styles.back} onPress={() => this.props.navigation.goBack()}>
+                    <Ionicons name="ios-arrow-round-back" size={32} color={"#FFF"}></Ionicons>
+                </TouchableOpacity>
+
+                <View style={{ position: "absolute", top: 64, alignItems: 'center', width: "100%" }}>
+                    <Text style={styles.header}>{`Créez toi un compte \n pour commencer.`}</Text>
+                </View>
 
                 <View style={styles.errorMessage}>
                     {this.state.errorMessage && <Text style={styles.error}>{this.state.errorMessage}</Text>}
                 </View>
 
                 <View style={styles.form}>
-                    <TextInput style={styles.textInput} placeholder="Prenom et nom" placeholderTextColor='#FFF'
-                        onChangeText={(name) => this.setState({ name })}
-                        autoCapitalize='none' />
-                    <TextInput style={styles.textInput} placeholder="Adresse mail " placeholderTextColor='#FFF'
-                        onChangeText={(email) => this.setState({ email })}
-                        autoCapitalize='none' />
-                    <TextInput style={styles.textInput} placeholder="Mot de passe " placeholderTextColor='#FFF' secureTextEntry onChangeText={(password) => this.setState({ password })} />
-                    <TextInput style={styles.textInput} placeholder="Confirmation du mot de passe " placeholderTextColor='#FFF' secureTextEntry onChangeText={(password) => this.setState({ password })} />
+                    <View>
+                        <Text style={styles.inputTitle}>Prenom Nom</Text>
+                        <TextInput style={styles.input}
+                            onChangeText={(name) => this.setState({ name })}
+                            autoCapitalize='none' />
+                    </View>
+                    <View style={{ marginTop: 26 }}>
+                        <Text style={styles.inputTitle}>Adresse mail</Text>
+                        <TextInput style={styles.input}
+                            onChangeText={(email) => this.setState({ email })}
+                            autoCapitalize='none' />
+                    </View>
+                    <View style={{ marginTop: 26 }}>
+                        <Text style={styles.inputTitle}>Mot de passe</Text>
+                        <TextInput style={styles.input} secureTextEntry onChangeText={(password) => this.setState({ password })} />
+                    </View>
+                    <View style={{ marginTop: 26 }}>
+                        <Text style={styles.inputTitle}>Confirmer votre mot de passe</Text>
+                        <TextInput style={styles.input} secureTextEntry onChangeText={(password) => this.setState({ password })} />
+                    </View>
                 </View>
 
                 <TouchableOpacity style={styles.userBtnRegister} onPress={this.handleSignUp}>
                     <Text style={styles.textBtn}>Que l'aventure commence ! </Text>
                 </TouchableOpacity>
                 <View style={styles.btnContainer}>
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Login')}>
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Loading')}>
                         <Text style={styles.textBtnCreate}>Déjà un compte ? </Text>
-                        <Text style={styles.textBtnCreate, { color: "#E616E6", textAlign: 'center', fontWeight: 'bold' }}>Connectez vous  </Text>
+                        <Text style={styles.textBtnCreate, { color: "#E616E6", textAlign: 'center', fontWeight: 'bold' }}>Utilise-le  </Text>
                     </TouchableOpacity>
                 </View>
             </SafeAreaView>
@@ -61,14 +84,32 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#14142d',
         alignItems: 'center',
+        justifyContent: 'center'
+    },
+    back: {
+        position: 'absolute',
+        top: 48,
+        left: 32,
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: "rgba(230,22,230, 0.8)"
+    },
+    avatar: {
+        width: 50,
+        height: 50,
+        borderRadius: 50,
+        backgroundColor: "rgba(230,22,230, 0.8)",
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     header: {
-        marginTop: 32,
         fontSize: 28,
         textAlign: 'center',
         color: "#FFF",
         paddingBottom: 10,
-        marginBottom: 20,
     },
     errorMessage: {
         height: 20
@@ -80,16 +121,21 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     form: {
-        marginBottom: 22,
+        marginVertical: 22,
         width: '80%',
     },
-    textInput: {
-        height: 40,
+    inputTitle: {
         color: "#FFF",
-        marginBottom: 30,
-        paddingBottom: 5,
-        borderBottomWidth: 1,
-        borderBottomColor: '#FFF'
+        fontSize: 12,
+        textTransform: "uppercase"
+    },
+    input: {
+        height: 40,
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        borderBottomColor: '#FFF',
+        fontSize: 18,
+        color: '#E616E6',
+        fontWeight: 'bold'
     },
     userBtnRegister: {
         width: '80%',
