@@ -12,8 +12,8 @@ require("firebase/firestore");
 export default class Post extends React.Component {
     state = {
         text: "",
-        image: null
-    }
+        image: ""
+    };
 
     componentDidMount() {
         this.getPhotoPermission();
@@ -23,14 +23,17 @@ export default class Post extends React.Component {
             const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL)
 
             if (status != "granted") {
-                alert("Autorisez-vous Tampo à acceder à votre galerie ?")
+                alert("Autorisez-vous que Tampo accède à votre galerie ?")
             }
         }
     };
+    // Envoie de la publication sur la base Firebase
     handlePost = () => {
-        Fire.shared.addPost({text: this.state.text.trim(), localUri: this.state.image})
+        Fire.shared
+        .addPost({ text: this.state.text.trim(), localUri: this.state.image })
         .then(ref => {
-            this.setState({ text: "", image: null});
+            this.setState({ text: "", image: ""});
+            console.log(this.state);
             this.props.navigation.goBack();
         })
         .catch(error => {
@@ -52,8 +55,8 @@ export default class Post extends React.Component {
         return (
             <SafeAreaView style={styles.container}>
                 <View style={styles.header}>
-                    <TouchableOpacity>
-                        <Ionicons name="md-arrow-back" size={24} color="rgba(230,22,230, 0.8)" onPress={() => this.props.navigation.goBack()}></Ionicons>
+                    <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+                        <Ionicons name="md-arrow-back" size={24} color="rgba(230,22,230, 0.8)" ></Ionicons>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={this.handlePost}>
                         <Text style={{ color: "rgba(230,22,230, 0.8)", fontWeight: 'bold' }}>Publier</Text>
@@ -62,9 +65,11 @@ export default class Post extends React.Component {
 
                 <View style={styles.inputContainer}>
                     <Image source={require("../Images/avatar_persona.png")} style={styles.avatar}></Image>
-                    <TextInput multiline={true} numberOfLines={4} style={{ flex: 1, color: "#FFF" }}
+                    <TextInput multiline={true} numberOfLines={4} 
+                        style={{ flex: 1, color: "#FFF" }}
                         placeholder="Quelque chose à partager ?" placeholderTextColor="#FFF"
-                        onChangeText={text => this.setState({text})} value={this.state.text}>
+                        onChangeText={text => this.setState({text})} 
+                        value={this.state.text}>
                     </TextInput>
                 </View>
 

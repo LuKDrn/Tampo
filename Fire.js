@@ -1,22 +1,19 @@
+import * as firebase from 'firebase';
 
-import firebase from 'firebase';
-
-var firebaseKeys = {
-    apiKey: "AIzaSyC5mBmYcaZywjWq2kKFQrNR4wlS_wnHu4o",
-    authDomain: "tampo-41ba7.firebaseapp.com",
-    databaseURL: "https://tampo-41ba7.firebaseio.com",
-    projectId: "tampo-41ba7",
-    storageBucket: "tampo-41ba7.appspot.com",
-    messagingSenderId: "815374756118",
-    appId: "1:815374756118:web:cfb7be8850379aa668c837",
-    measurementId: "G-GJPWTJYBVP"
-};
 class Fire {
     constructor() {
-        firebase.initializeApp(firebaseKeys)
+        firebase.initializeApp({
+            apiKey: "AIzaSyC5mBmYcaZywjWq2kKFQrNR4wlS_wnHu4o",
+            authDomain: "tampo-41ba7.firebaseapp.com",
+            databaseURL: "https://tampo-41ba7.firebaseio.com",
+            projectId: "tampo-41ba7",
+            storageBucket: "tampo-41ba7.appspot.com",
+            messagingSenderId: "815374756118",
+            appId: "1:815374756118:web:cfb7be8850379aa668c837",
+            measurementId: "G-GJPWTJYBVP"
+        });
     }
 
-    // Envoie de la publication sur la base Firebase
     addPost = async ({text, localUri}) => {
         const remoteUri = await this.uploadPhotoAsync(localUri)
 
@@ -42,16 +39,19 @@ class Fire {
         const path = `photos/${this.uid}/${Date.now()}.jpg`;
 
         return new Promise(async (res, rej) => {
-            const response = await fetch(uri)
-            const file = await response.blob()
+            const response = await fetch(uri);
+            const file = await response.blob();
 
             let upload = firebase
             .storage()
             .ref(path)
             .put(file);
 
-            upload.on("state_changed", snapshot => {}, err => {
-                rej(err)
+            upload.on(
+                "state_changed",
+                 snapshot => {},
+                  err => {
+                    rej(err)
             },
             async () => {
                 const url = await upload.snapshot.ref.getDownloadURL();
