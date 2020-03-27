@@ -5,21 +5,23 @@ import Fire from "../Fire";
 
 export default class Message extends React.Component {
     state = {
-        messages: []
+        messages: [],
+        displayName: ""
     }
 
     get user() {
         return {
             _id: Fire.uid,
-            name: this.props.navigation.state.params.name
+            name: this.props.navigation.state.displayName
         }
     }
 
     ComponentDidMount() {
+        const displayName = firebase.auth().currentUser;
         Fire.get(messages => 
             this.setState(previous => ({
                 messages: GiftedChat.append(previous.messages, message)
-            }))
+            }, displayName))
         );
     }
 
@@ -39,10 +41,19 @@ export default class Message extends React.Component {
         }
         return (
             <View style={styles.container}>
-                <Text>Sreen</Text>
+                <Text style={{color: "#FFF"}}>Sreen</Text>
             </View>
         )
     }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: '#14142d'
+    },
+})
 
 
