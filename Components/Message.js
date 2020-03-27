@@ -30,7 +30,7 @@ export default class Message extends React.Component {
     }
 
     render () {
-        const chat = <GiftedChat message={this.state.messages} onSend={Fire.Send} user={this.user} />
+        const chat = <GiftedChat messages={this.state.messages} onSend={Fire.send} user={this.user} />;
 
         if (Platform.OS === 'android') {
             return (
@@ -39,11 +39,8 @@ export default class Message extends React.Component {
                 </KeyboardAvoidingView>
             );
         }
-        return (
-            <View style={styles.container}>
-                <Text style={{color: "#FFF"}}>Sreen</Text>
-            </View>
-        )
+        return <SafeAreaView style={{ flex: 1}}>{chat}</SafeAreaView>;
+        
     }
 }
 
