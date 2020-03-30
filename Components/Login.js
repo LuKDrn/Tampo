@@ -73,10 +73,11 @@ const styles = StyleSheet.create({
         width: "90%",
     },
     errorMessage: {
-        height: 30
+        height: 20,
+        marginTop: 12
     },
     error: {
-        color: "#E616E6",
+        color: "#E61E16",
         fontSize: 16,
         fontWeight: "bold",
         textAlign: 'center'
@@ -95,9 +96,9 @@ const styles = StyleSheet.create({
         height: 40,
         borderBottomWidth: StyleSheet.hairlineWidth,
         borderBottomColor: '#FFF',
-        fontSize: 18,
-        color: '#E616E6',
-        fontWeight: 'bold'
+        fontSize: 14,
+        color: '#FFF',
+        fontWeight: '500'
     },
     userBtnLogIn: {
         width: '80%',

@@ -1,26 +1,37 @@
 import React from 'react';
-import { View, TouchableOpacity, TextInput, Text, StyleSheet, SafeAreaView, StatusBar, LayoutAnimation } from 'react-native';
+import { View, TouchableOpacity, TextInput, Text, StyleSheet, SafeAreaView, StatusBar, LayoutAnimation, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'
 import * as firebase from 'firebase';
+import UserPermissions from '../Utilities/UserPermissions';
+import * as ImagePicker from 'expo-image-picker';
+import Fire from "../Fire";
 
 export default class Register extends React.Component {
     state = {
-        name: "",
-        email: '',
-        password: '',
-        errorMessage: null
+        user : {
+            name: "",
+            email: '',
+            password: '',
+            avatar: "",
+        },
+        errorMessage: null,
     };
 
+    handlePickAvatar = async () => {
+        UserPermissions.getCameraPermission()
+        
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3]
+        });
+        if (!result.cancelled) {
+            this.setState({ user : { ...this.state.user, avatar: result.uri} }),
+            avatar => this.setState({ user: {...this.state.user.avatar, avatar} })
+        }
+    }
     handleSignUp = () => {
-        firebase
-            .auth()
-            .createUserWithEmailAndPassword(this.state.email, this.state.password)
-            .then(userCredentials => {
-                return userCredentials.user.updateProfile({
-                    displayName: this.state.name
-                });
-            })
-            .catch(error => this.setState({ errorMessage: error.message }));
+        Fire.shared.createUser(this.state.user);
     };
 
     render() {
@@ -30,49 +41,63 @@ export default class Register extends React.Component {
             <SafeAreaView style={styles.container}>
                 <StatusBar barStyle="light-content"></StatusBar>
 
-                <TouchableOpacity style={styles.back} onPress={() => this.props.navigation.goBack()}>
-                    <Ionicons name="ios-arrow-round-back" size={32} color={"#FFF"}></Ionicons>
-                </TouchableOpacity>
-
-                <View style={{ position: "absolute", top: 64, alignItems: 'center', width: "100%" }}>
-                    <Text style={styles.header}>{`Créez toi un compte \n pour commencer.`}</Text>
-                </View>
-
-                <View style={styles.errorMessage}>
-                    {this.state.errorMessage && <Text style={styles.error}>{this.state.errorMessage}</Text>}
-                </View>
-
-                <View style={styles.form}>
-                    <View>
-                        <Text style={styles.inputTitle}>Prenom Nom</Text>
-                        <TextInput style={styles.input}
-                            onChangeText={(name) => this.setState({ name })}
-                            autoCapitalize='none' />
-                    </View>
-                    <View style={{ marginTop: 26 }}>
-                        <Text style={styles.inputTitle}>Adresse mail</Text>
-                        <TextInput style={styles.input}
-                            onChangeText={(email) => this.setState({ email })}
-                            autoCapitalize='none' />
-                    </View>
-                    <View style={{ marginTop: 26 }}>
-                        <Text style={styles.inputTitle}>Mot de passe</Text>
-                        <TextInput style={styles.input} secureTextEntry onChangeText={(password) => this.setState({ password })} />
-                    </View>
-                    <View style={{ marginTop: 26 }}>
-                        <Text style={styles.inputTitle}>Confirmer votre mot de passe</Text>
-                        <TextInput style={styles.input} secureTextEntry onChangeText={(password) => this.setState({ password })} />
-                    </View>
-                </View>
-
-                <TouchableOpacity style={styles.userBtnRegister} onPress={this.handleSignUp}>
-                    <Text style={styles.textBtn}>Que l'aventure commence ! </Text>
-                </TouchableOpacity>
-                <View style={styles.btnContainer}>
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Loading')}>
-                        <Text style={styles.textBtnCreate}>Déjà un compte ? </Text>
-                        <Text style={styles.textBtnCreate, { color: "#E616E6", textAlign: 'center', fontWeight: 'bold' }}>Utilise-le  </Text>
+                <View style={styles.header}>
+                    <TouchableOpacity style={styles.back} onPress={() => this.props.navigation.goBack()}>
+                        <Ionicons name="ios-arrow-round-back" size={32} color={"#FFF"}></Ionicons>
                     </TouchableOpacity>
+                </View>
+
+                <View style={styles.inputContainer}>
+                    <View style={styles.errorMessage}>
+                        {this.state.errorMessage && <Text style={styles.error}>{this.state.errorMessage}</Text>}
+                    </View>
+                        <TouchableOpacity style={styles.avatarPlaceholder} onPress={this.handlePickAvatar}>
+                            <Image source={{ uri: this.state.user.avatar }} style={styles.avatar} />
+                            <Ionicons 
+                                name="ios-add"
+                                size={40}
+                                color="#14142d">                            
+                            </Ionicons>
+                        </TouchableOpacity>
+                    <Text style={{color: "#FFF",marginVertical: 20, fontSize: 12,textTransform: "uppercase"}}>Photo de profil</Text>
+                    <View style={styles.form}>
+                        <View>
+                            <Text style={styles.inputTitle}>Nom complet</Text>
+                            <TextInput style={styles.input}
+                                onChangeText={name=> this.setState({ user: { ...this.state.user, name} })}
+                                value={this.state.user.name}
+                                autoCapitalize='none' />
+                        </View>
+                        <View style={{ marginTop: 20 }}>
+                            <Text style={styles.inputTitle}>Adresse mail</Text>
+                            <TextInput style={styles.input}
+                                onChangeText={email => this.setState({ user: { ...this.state.user, email} })}
+                                value={this.state.user.email}
+                                autoCapitalize='none' />
+                        </View>
+                        <View style={{ marginTop: 20 }}>
+                            <Text style={styles.inputTitle}>Mot de passe</Text>
+                            <TextInput style={styles.input} secureTextEntry
+                                      onChangeText={password => this.setState({ user: { ...this.state.user, password} })}
+                                      value={this.state.user.password} />
+                        </View>
+                        {/* <View style={{ marginTop: 20 }}>
+                            <Text style={styles.inputTitle}>Confirmer votre mot de passe</Text>
+                            <TextInput 
+                                    style={styles.input} secureTextEntry 
+                                    onChangeText={(password) => this.setState({ user: { ...this.state.user, password} })}/>
+                        </View> */}
+                    </View>
+
+                    <TouchableOpacity style={styles.userBtnRegister} onPress={this.handleSignUp}>
+                        <Text style={styles.textBtn}>Que l'aventure commence ! </Text>
+                    </TouchableOpacity>
+                    <View style={styles.btnContainer}>
+                        <TouchableOpacity onPress={() => this.props.navigation.navigate('Loading')}>
+                            <Text style={styles.textBtnCreate}>Déjà un compte ? </Text>
+                            <Text style={styles.textBtnCreate, { color: "#E616E6", textAlign: 'center', fontWeight: 'bold' }}>Utilise-le  </Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </SafeAreaView>
         )
@@ -83,40 +108,52 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#14142d',
-        alignItems: 'center',
-        justifyContent: 'center'
+    },
+    header: {
+        flexDirection: "row",
+        alignItems: "center",
+        paddingHorizontal: 32,
+        paddingVertical: 8,
+        shadowColor: "rgb(13, 16, 33)",
+        shadowOffset: { height: 5 },
+        shadowRadius: 15,
+        shadowOpacity: 0.2,
+        zIndex: 10
     },
     back: {
-        position: 'absolute',
-        top: 48,
-        left: 32,
         width: 32,
         height: 32,
         borderRadius: 16,
-        alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: "rgba(230,22,230, 0.8)"
+        alignSelf: 'center',
+    },
+    inputContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',      
+    },
+    avatarPlaceholder: {
+        backgroundColor: '#E1E2E6',
+        borderRadius: 50,
+        marginVertical: 12,
+        justifyContent: "center",
+        alignItems: "center"
     },
     avatar: {
-        width: 50,
-        height: 50,
+        position: "absolute",
+        width: 100,
+        height: 100,
         borderRadius: 50,
-        backgroundColor: "rgba(230,22,230, 0.8)",
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    header: {
-        fontSize: 28,
-        textAlign: 'center',
-        color: "#FFF",
-        paddingBottom: 10,
+        backgroundColor: "#E1E2E6",
+        justifyContent: "center",
+        alignItems: "center"
     },
     errorMessage: {
-        height: 20
+        height: 20,
+        marginTop: 12
     },
     error: {
-        color: "#E616E6",
-        fontSize: 16,
+        color: "#E61E16",
+        fontSize: 13,
         fontWeight: "bold",
         textAlign: 'center'
     },
@@ -133,9 +170,9 @@ const styles = StyleSheet.create({
         height: 40,
         borderBottomWidth: StyleSheet.hairlineWidth,
         borderBottomColor: '#FFF',
-        fontSize: 18,
-        color: '#E616E6',
-        fontWeight: 'bold'
+        fontSize: 14,
+        color: '#FFF',
+        fontWeight: '500'
     },
     userBtnRegister: {
         width: '80%',

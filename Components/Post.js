@@ -5,7 +5,7 @@ import Contants from "expo-constants";
 import * as Permissions from "expo-permissions";
 import Fire from "../Fire";
 import * as ImagePicker from "expo-image-picker";
-
+import UserPermissions from "../Utilities/UserPermissions";
 const firebase = require('firebase');
 require("firebase/firestore");
 
@@ -16,17 +16,9 @@ export default class Post extends React.Component {
     };
 
     componentDidMount() {
-        this.getPhotoPermission();
+        UserPermissions.getCameraPermission();
     }
-    getPhotoPermission = async () => {
-        if (Contants.platform.ios) {
-            const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL)
-
-            if (status != "granted") {
-                alert("Autorisez-vous que Tampo accède à votre galerie ?")
-            }
-        }
-    };
+    
     // Envoie de la publication sur la base Firebase
     handlePost = () => {
         Fire.shared
@@ -76,9 +68,9 @@ export default class Post extends React.Component {
                 <TouchableOpacity onPress={this.pickImage}>
                     <View style={styles.media}>
                         <View style={{ borderRadius: 24, padding: 5 }}>
-                            <TouchableOpacity style={styles.photo}>
+                            <View style={styles.photo}>
                                 <Ionicons name="md-camera" size={32} style={{ color: "#FFF", paddingHorizontal: 5 }}></Ionicons>
-                            </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
                     <View style={styles.media}>
@@ -105,7 +97,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingHorizontal: 32,
         paddingVertical: 12,
-        borderBottomWidth: StyleSheet.hairlineWidth
+        borderBottomWidth: 1,
+        borderBottomColor: "#FFF",
+        shadowColor: "rgb(13, 16, 33)",
+        shadowOffset: { height: 5 },
+        shadowRadius: 15,
+        shadowOpacity: 0.2,
+        zIndex: 10
     },
     inputContainer: {
         margin: 32,

@@ -3,7 +3,7 @@ import {View, Text, StyleSheet, SafeAreaView, Platform} from 'react-native';
 import { GiftedChat } from "react-native-gifted-chat";
 import Fire from "../Fire";
 
-export default class Message extends React.Component {
+export default class Chat extends React.Component {
     state = {
         messages: [],
         displayName: ""
@@ -30,16 +30,16 @@ export default class Message extends React.Component {
     }
 
     render () {
-        const chat = <GiftedChat messages={this.state.messages} onSend={Fire.send} user={this.user} />;
+        const chat = <GiftedChat messages={this.state.messages} onSend={Fire.send} user={this.user} style={{color: "#FFF"}} />;
 
         if (Platform.OS === 'android') {
             return (
-                <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" keyboradVerticalOffset={30} enabled>
+                <KeyboardAvoidingView style={ styles.container } behavior="padding" keyboradVerticalOffset={30} enabled>
                     {chat}
                 </KeyboardAvoidingView>
             );
         }
-        return <SafeAreaView style={{ flex: 1}}>{chat}</SafeAreaView>;
+        return <SafeAreaView style={ styles.container }>{chat}</SafeAreaView>;
         
     }
 }
@@ -47,8 +47,6 @@ export default class Message extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
         backgroundColor: '#14142d'
     },
 })

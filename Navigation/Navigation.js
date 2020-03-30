@@ -10,8 +10,8 @@ import Login from '../Components/Login';
 import Register from '../Components/Register';
 import Loading from '../Components/Loading';
 
-import Index from '../Components/Index';
-import Message from '../Components/Message';
+import Home from '../Components/Home';
+import Chat from '../Components/Chat';
 import Notification from '../Components/Notification';
 import Post from '../Components/Post';
 import Profile from '../Components/Profile';
@@ -23,13 +23,13 @@ const AppContainer = createStackNavigator (
         default : createBottomTabNavigator (
                 {
                     Accueil: {
-                        screen: Index,
+                        screen: Home,
                         navigationOptions: {
                             tabBarIcon: ({ tintColor }) => <Ionicons name="ios-home" size={24} color={tintColor} />
                         }
                     },
                     Messages : {
-                        screen: Message,
+                        screen: Chat,
                         navigationOptions: {
                             tabBarIcon: ({ tintColor }) => <Ionicons name="ios-chatboxes" size={24} color={tintColor} />
                         }
@@ -40,7 +40,7 @@ const AppContainer = createStackNavigator (
                             tabBarIcon: ({ tintColor }) => <Ionicons
                             name="ios-add-circle"
                             size={44} 
-                            color={"rgba(230,22,230, 0.6)"}
+                            color={"#E616E6"}
                             style={{ shadowColor: "rgba(230,22,230, 0.6)",
                                     shadowOffset: { width: 0, height: 0, shadowRadius: 10, shadowOpacity: 0.3}
                             }} />
@@ -71,7 +71,7 @@ const AppContainer = createStackNavigator (
                     }
                 },
                 tabBarOptions: {
-                    activeTintColor: "#75EAEA",
+                    activeTintColor: "rgba(230,22,230, 0.4)",
                     inactiveTintColor: "#B8BBC4",
                     showLabel: false
                 }

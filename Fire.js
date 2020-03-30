@@ -13,12 +13,37 @@ class Fire {
             measurementId: "G-GJPWTJYBVP"
         });
     }
+    //Création d'un utilisateur 
+    createUser = async user => {
+        let remoteUri= null
 
+        try {
+            await firebase.auth().createUserWithEmailAndPassword(user.email, user.password)
+
+            let db = this.firestore.collection("users").doc(this.uid)
+            db.set({
+                name: user.name,
+                email: user.email,
+                avatar: "",
+            })
+
+            if (user.avatar){
+                remoteUri = await this.uploadPhotoAsync(user.avatar, `avatars/${this.uid}`);
+                db.set({avatar: remoteUri}, {merge: true});
+            }
+        }
+        catch (error) {
+            alert("Erreur: ", error);
+        }
+    }
+    
+    //Ajout dans la base de la publication
     addPost = async ({text, localUri}) => {
-        const remoteUri = await this.uploadPhotoAsync(localUri)
+        const remoteUri = await this.uploadPhotoAsync(localUri, `photos/${this.uid}/${Date.now()}`);
 
         return new Promise((res, rej) => {
-            this.firestore.collection("posts")
+            this.firestore
+            .collection("posts")
             .add({
                 text,
                 uid: this.uid,
@@ -35,16 +60,14 @@ class Fire {
     };
 
     // Téléchargement de la photos séléctionné
-    uploadPhotoAsync = async uri => {
-        const path = `photos/${this.uid}/${Date.now()}.jpg`;
-
+    uploadPhotoAsync = async (uri, filename) => {
         return new Promise(async (res, rej) => {
             const response = await fetch(uri);
             const file = await response.blob();
 
             let upload = firebase
             .storage()
-            .ref(path)
+            .ref(filename)
             .put(file);
 
             upload.on(
@@ -61,16 +84,7 @@ class Fire {
         });
     };
 
-    get firestore() {
-        return firebase.firestore()
-    }
-    get uid() {
-        return (firebase.auth().currentUser || {}).uid;
-    }
-    get timestamp() {
-        return Date.now();
-    }
-
+    // Envoie de messages
     send = messages => {
         messages.forEach(item => {
             const message = {
@@ -82,7 +96,8 @@ class Fire {
             this.db.push(message);
         });
     };
-
+    
+    //Affichage de messages
     parse = message => {
         const {user, text, timestamp} = message.val();
         const { key: _id } = message;
@@ -95,6 +110,22 @@ class Fire {
             user
         };
     };
+    signOut = () => {
+        firebase.auth().signOut();
+    }
+    //Connexion à la BDD
+    get firestore() {
+        return firebase.firestore();
+    }
+    //Récupérer l'utilisateur connecte
+    get uid() {
+        return (firebase.auth().currentUser || {}).uid;
+    }
+    // L'heure actuelle
+    get timestamp() {
+        return Date.now();
+    }
+
 
     get = callback => {
         this.db.on('child_added', snapshot => callback(this.parse(snapshot)));
@@ -107,11 +138,6 @@ class Fire {
     get db() {
         return firebase.database().ref("messages");
     }
-
-    get uid() {
-        return (firebase.auth().currentUser || {}).uid
-    }
-
 }
 
 Fire.shared = new Fire();
