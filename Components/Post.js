@@ -1,8 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import Contants from "expo-constants";
-import * as Permissions from "expo-permissions";
 import Fire from "../Fire";
 import * as ImagePicker from "expo-image-picker";
 import UserPermissions from "../Utilities/UserPermissions";
@@ -12,11 +10,22 @@ require("firebase/firestore");
 export default class Post extends React.Component {
     state = {
         text: "",
-        image: ""
+        image: "",
+        user : {}
     };
 
     componentDidMount() {
         UserPermissions.getCameraPermission();
+
+        //Récupère les informations de l'utilisateur connecté 
+        const user = this.props.uid || Fire.shared.uid;
+
+        this.unsubscribe = Fire.shared.firestore
+        .collection("users")
+        .doc(user)
+        .onSnapshot(doc => {
+            this.setState({ user : doc.data() });
+        });
     }
     
     // Envoie de la publication sur la base Firebase
@@ -25,7 +34,6 @@ export default class Post extends React.Component {
         .addPost({ text: this.state.text.trim(), localUri: this.state.image })
         .then(ref => {
             this.setState({ text: "", image: ""});
-            console.log(this.state);
             this.props.navigation.goBack();
         })
         .catch(error => {
@@ -56,7 +64,7 @@ export default class Post extends React.Component {
                 </View>
 
                 <View style={styles.inputContainer}>
-                    <Image source={require("../Images/avatar_persona.png")} style={styles.avatar}></Image>
+                    <Image source={this.state.user.avatar ? { uri: this.state.user.avatar }: require("../Images/music_icon.png")} style={styles.avatar}></Image>
                     <TextInput multiline={true} numberOfLines={4} 
                         style={{ flex: 1, color: "#FFF" }}
                         placeholder="Quelque chose à partager ?" placeholderTextColor="#FFF"

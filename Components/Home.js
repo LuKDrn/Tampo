@@ -4,51 +4,72 @@ import * as firebase from 'firebase'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Ionicons } from "@expo/vector-icons";
 import moment from "moment";
+import Fire from '../Fire';
 
-var posts = [
-    {
-        id: "1",
-        name: "Julie Lescaut",
-        text: "Vingt-neuf ans : premiers coups bas et premières trahisons pour s'élever. Demeurons, me dit avec un soupir, presque un toussotement.",
-        timestamp: 1569109273726,
-        avatar: require("../Images/avatar_persona.png"),
-        image: require("../Images/Icone_appli.png")
-    },
-    {
-        id: "2",
-        name: "Julie Lescaut",
-        text: "Vingt-neuf ans : premiers coups bas et premières trahisons pour s'élever. Demeurons, me dit avec un soupir, presque un toussotement.",
-        timestamp: 1569109273726,
-        avatar: require("../Images/avatar_persona.png"),
-        image: require("../Images/Logo_complete.png")
-    },
-    {
-        id: "3",
-        name: "Julie Lescaut",
-        text: "Vingt-neuf ans : premiers coups bas et premières trahisons pour s'élever. Demeurons, me dit avec un soupir, presque un toussotement.",
-        timestamp: 1569109273726,
-        avatar: require("../Images/avatar_persona.png"),
-        image: require("../Images/Logo_complete.png")
-    }
-];
+var posts = [];
 
 export default class Home extends React.Component {
+    componentDidMount(){
+        //On récupère la base "Posts"
+        var lesPosts = Fire.shared.firestore.collection('posts').get();
+
+        //On récupère tous les Posts
+        lesPosts.then(function(query) {
+            query.forEach(function(doc) {
+                const {image, text, timestamp, uid} = doc.data();
+                //On récupère la base "users"
+                Fire.shared.firestore.collection('users')
+                .doc(uid)
+                .onSnapshot(function(documentSnapshot) {
+                    if (documentSnapshot.exists) {
+                        posts.push({
+                            id: doc.id,
+                            image,
+                            text,
+                            timestamp,
+                            user : documentSnapshot.data()
+                        });
+                    }
+                    else {
+                        // user sera null si l'utilisateur à supprimé son compte
+                        //On ajoute dans le tableau "posts"
+                        posts.push({
+                            id: doc.id,
+                            image,
+                            text,
+                            timestamp,
+                            user : null
+                        });
+                    }
+                });
+            }) 
+            })
+        };
+    
+
     renderPost = post => {
         return (
             <View style={styles.feedItem}>
                 <View style={{ flex: 1, padding: 5 }}>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                         <View style={{ flexDirection: "row" }}>
-                            <Image source={post.avatar} style={styles.avatar} />
+                            <Image source={
+                                post.user.avatar ? { uri: post.user.avatar }
+                                : require("../Images/music_icon.png")
+                                } style={styles.avatar} />
                             <View style={{ flexDirection: "column" }}>
-                                <Text style={styles.name}>{post.name}</Text>
+                                <Text style={styles.name}>{post.user.name}</Text>
                                 <Text style={styles.timestamp}>{moment(post.timestamp).fromNow()}</Text>
                             </View>
                         </View>
                         <Ionicons name="ios-more" size={24} color="#14142d" />
                     </View>
 
-                    <Image source={post.image} style={styles.postImage} resizeMode="cover" />
+                    <Image source={
+                                post.image ? { uri: post.image }
+                                : require("../Images/music_icon.png")
+                                }
+                                style={styles.postImage} resizeMode="cover" />
                     <Text style={styles.post}>{post.text}</Text>
 
                     <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
@@ -106,11 +127,11 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         padding: 8,
         flexDirection: "column",
-        marginVertical: 8
+        marginVertical: 8,
     },
     avatar: {
-        width: 36,
-        height: 36,
+        width: 48,
+        height: 48,
         borderRadius: 24,
         marginRight: 16
     },
@@ -127,11 +148,11 @@ const styles = StyleSheet.create({
     post: {
         fontSize: 14,
         color: "black",
-        marginBottom: 24
+        marginBottom: 24,
     },
     postImage: {
         width: undefined,
-        height: 150,
+        height: 300,
         borderRadius: 5,
         marginVertical: 16,
         justifyContent: "center"

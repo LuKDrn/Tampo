@@ -11,6 +11,7 @@ export default class Profile extends React.Component {
     unsubscribe = null;
 
     componentDidMount() {
+        //Récupère les informations de l'utilisateur connecté
         const user = this.props.uid || Fire.shared.uid;
 
         this.unsubscribe = Fire.shared.firestore
@@ -41,7 +42,7 @@ export default class Profile extends React.Component {
                     </View>
                     <Text style={styles.name}>{this.state.user.name}</Text>
                 </View>
-                <View style={styles.statsContainer}>
+                {/* <View style={styles.statsContainer}>
                     <View style={styles.state}>
                         <Text style={styles.statAmount}>22</Text>
                         <Text style={styles.statTitle}>Publications</Text>
@@ -54,9 +55,10 @@ export default class Profile extends React.Component {
                         <Text style={styles.statAmount}>105</Text>
                         <Text style={styles.statTitle}>Abonnement</Text>
                     </View>
-                </View>
+                </View> */}
                 <TouchableOpacity  style={{alignItems: 'center'}}onPress={() => {Fire.shared.signOut()}}>
-                    <Text style={{ color: "#E616E6" }}>Se déconnecter</Text>
+                    <Text style={{ color: "#E616E6" }}>Se
+                     déconnecter</Text>
                 </TouchableOpacity>
             </SafeAreaView>
         )
