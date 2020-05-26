@@ -1,58 +1,83 @@
+//Copyright TAMPO 
+// Author : Lucas DEROUIN
+
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, TextInput } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, TextInput, Dimensions, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { Video } from 'expo-av';
+import { Feather, Ionicons } from '@expo/vector-icons';
 import Fire from "../Fire";
 import * as ImagePicker from "expo-image-picker";
 import UserPermissions from "../Utilities/UserPermissions";
 const firebase = require('firebase');
 require("firebase/firestore");
 
+const DismissKeyboard = ({ children }) => (
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        {children}
+    </TouchableWithoutFeedback>
+);
 export default class Post extends React.Component {
     state = {
         text: "",
-        image: "",
-        user : {}
+        video: null,
+        user: {},
+        isLoading: false
     };
-
     componentDidMount() {
         UserPermissions.getCameraPermission();
 
         //Récupère les informations de l'utilisateur connecté 
         const user = this.props.uid || Fire.shared.uid;
-
-        this.unsubscribe = Fire.shared.firestore
-        .collection("users")
-        .doc(user)
-        .onSnapshot(doc => {
-            this.setState({ user : doc.data() });
-        });
+        Fire.shared.firestore
+            .collection("users")
+            .doc(user)
+            .onSnapshot(doc => {
+                this.setState({ user: doc.data() });
+            });
     }
-    
+
     // Envoie de la publication sur la base Firebase
     handlePost = () => {
-        Fire.shared
-        .addPost({ text: this.state.text.trim(), localUri: this.state.image })
-        .then(ref => {
-            this.setState({ text: "", image: ""});
-            this.props.navigation.goBack();
-        })
-        .catch(error => {
-            alert(error);
-        });
+        if (this.state.text.length > 0 && this.state.user != null && this.state.video != null) {
+            this.setState({ isLoading: true }) // Lancement du chargement
+            this._displayLoading();
+            Fire.shared
+                .addPost({ text: this.state.text.trim(), localUri: this.state.video })
+                .then(ref => {
+                    this.setState({ text: "", video: "", isLoading: false });
+                    this.props.navigation.goBack();
+                })
+                .catch(error => {
+                    alert(error);
+                });
+        }
     };
 
-    pickImage = async () => {
+    _displayLoading() {
+        if (this.state.isLoading) {
+            return (
+                <View style={styles.loading_container}>
+                    <Text>Chargement... </Text>
+                    <ActivityIndicator size='large'></ActivityIndicator>
+                </View>
+            )
+        }
+    }
+
+    // Récupère l'image séléctionnée depuis la galerie 
+    pickVideo = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            mediaTypes: ImagePicker.MediaTypeOptions.Videos,
             allowsEditing: true,
             aspect: [4, 3]
         })
         if (!result.cancelled) {
-            this.setState({ image: result.uri })
+            this.setState({ video: result.uri })
         }
     }
     render() {
         return (
+            <DismissKeyboard>
             <SafeAreaView style={styles.container}>
                 <View style={styles.header}>
                     <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
@@ -64,20 +89,20 @@ export default class Post extends React.Component {
                 </View>
 
                 <View style={styles.inputContainer}>
-                    <Image source={this.state.user.avatar ? { uri: this.state.user.avatar }: require("../Images/music_icon.png")} style={styles.avatar}></Image>
-                    <TextInput multiline={true} numberOfLines={4} 
+                    <Image source={this.state.user.avatar ? { uri: this.state.user.avatar } : require("../Images/music_icon.png")} style={styles.avatar}></Image>
+                    <TextInput
                         style={{ flex: 1, color: "#FFF" }}
                         placeholder="Quelque chose à partager ?" placeholderTextColor="#FFF"
-                        onChangeText={text => this.setState({text})} 
+                        onChangeText={text => this.setState({ text })}
+                        onSubmitEditing={DismissKeyboard}
                         value={this.state.text}>
                     </TextInput>
                 </View>
-
-                <TouchableOpacity onPress={this.pickImage}>
+                <TouchableOpacity onPress={this.pickVideo}>
                     <View style={styles.media}>
                         <View style={{ borderRadius: 24, padding: 5 }}>
                             <View style={styles.photo}>
-                                <Ionicons name="md-camera" size={32} style={{ color: "#FFF", paddingHorizontal: 5 }}></Ionicons>
+                                <Feather name="video" size={32} style={{ color: "#FFF", paddingHorizontal: 5 }} />
                             </View>
                         </View>
                     </View>
@@ -86,10 +111,16 @@ export default class Post extends React.Component {
                     </View>
                 </TouchableOpacity>
 
-                <View style={{marginHorizontal: 32, marginTop: 32, height: 150}}>
-                    <Image source={{ uri: this.state.image }} style={{width: "100%", height: "100%"}}></Image>
+                <View style={{ marginHorizontal: 32, marginTop: 32, height: 150 }}>
+                    <Video source={{ uri: this.state.video }}
+                        shouldPlay={false}
+                        isLooping={false}
+                        useNativeControls
+                        resizeMode="cover"
+                        style={{ width: "100%", height: "100%" }} />
                 </View>
             </SafeAreaView>
+            </DismissKeyboard>
         )
     }
 }
@@ -105,8 +136,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingHorizontal: 32,
         paddingVertical: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: "#FFF",
         shadowColor: "rgb(13, 16, 33)",
         shadowOffset: { height: 5 },
         shadowRadius: 15,
@@ -126,5 +155,16 @@ const styles = StyleSheet.create({
     media: {
         flexDirection: "row",
         justifyContent: 'center',
+    },
+    video: {
+    },
+    loading_container: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: 100,
+        bottom: 0,
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 })

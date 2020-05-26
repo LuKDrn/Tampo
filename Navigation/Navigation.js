@@ -4,7 +4,7 @@ import { View, ActivityIndicator, StatusBar, AsyncStorage, StyleSheet } from 're
 import { createStackNavigator } from 'react-navigation-stack';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons,AntDesign,Entypo } from "@expo/vector-icons";
 
 import Login from '../Components/Login';
 import Register from '../Components/Register';
@@ -17,6 +17,7 @@ import Post from '../Components/Post';
 import Profile from '../Components/Profile';
 
 import * as firebase from 'firebase'
+import { color } from 'react-native-reanimated';
 
 const AppContainer = createStackNavigator (
     {
@@ -25,13 +26,19 @@ const AppContainer = createStackNavigator (
                     Accueil: {
                         screen: Home,
                         navigationOptions: {
-                            tabBarIcon: ({ tintColor }) => <Ionicons name="ios-home" size={24} color={tintColor} />
+                            tabBarIcon: ({ tintColor }) => <AntDesign 
+                            name="home" 
+                            size={24} 
+                            color={tintColor}/>
                         }
                     },
                     Messages : {
                         screen: Chat,
                         navigationOptions: {
-                            tabBarIcon: ({ tintColor }) => <Ionicons name="ios-chatboxes" size={24} color={tintColor} />
+                            tabBarIcon: ({ tintColor }) => <Entypo 
+                            name="chat" 
+                            size={24} 
+                            color={tintColor}/>
                         }
                     },
                     Publier: {
@@ -40,22 +47,26 @@ const AppContainer = createStackNavigator (
                             tabBarIcon: ({ tintColor }) => <Ionicons
                             name="ios-add-circle"
                             size={44} 
-                            color={"#E616E6"}
-                            style={{ shadowColor: "rgba(230,22,230, 0.6)",
-                                    shadowOffset: { width: 0, height: 0, shadowRadius: 10, shadowOpacity: 0.3}
-                            }} />
+                            color={"#75EAEA"}
+                            />
                         }
                     },
                     Notifications : {
                         screen: Notification,
                         navigationOptions: {
-                            tabBarIcon: ({ tintColor }) => <Ionicons name="ios-notifications" size={24} color={tintColor} />
+                            tabBarIcon: ({ tintColor }) => <Entypo 
+                            name="notification" 
+                            size={24} 
+                            color={tintColor} />
                         }
                     },
                     Profil : {
                         screen: Profile,
                         navigationOptions: {
-                            tabBarIcon: ({ tintColor }) => <Ionicons name="ios-person" size={24} color={tintColor} />
+                            tabBarIcon: ({ tintColor }) => <AntDesign 
+                            name="user" 
+                            size={24} 
+                            color={tintColor}/>
                         }
                     }
             },
@@ -71,9 +82,14 @@ const AppContainer = createStackNavigator (
                     }
                 },
                 tabBarOptions: {
-                    activeTintColor: "rgba(230,22,230, 0.4)",
-                    inactiveTintColor: "#B8BBC4",
-                    showLabel: false
+                    activeTintColor: "#75EAEA",
+                    inactiveTintColor: "#FFF",
+                    showLabel: false,
+                    style: {
+                        backgroundColor: '#14142d',
+                        borderWidth: 0,
+                        borderColor: "#14142d"
+                    }
                 }
             }
         ),

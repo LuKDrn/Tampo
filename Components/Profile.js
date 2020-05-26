@@ -1,3 +1,6 @@
+//Copyright TAMPO 
+// Author : Lucas DEROUIN
+
 import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, LayoutAnimation, TouchableOpacity, Image } from 'react-native';
 import * as firebase from 'firebase';
@@ -20,10 +23,6 @@ export default class Profile extends React.Component {
         .onSnapshot(doc => {
             this.setState({ user : doc.data() });
         });
-    }
-
-    componentWillUnmount() {
-        this.unsubscribe();
     }
 
     render() {

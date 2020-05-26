@@ -1,3 +1,6 @@
+//Copyright TAMPO 
+// Author : Lucas DEROUIN
+
 import Constants from 'expo-constants';
 import * as Permissions from 'expo-permissions';
 

@@ -1,4 +1,8 @@
+// Copyright TAMPO 
+// Author : Lucas DEROUIN
+
 import * as firebase from 'firebase';
+import { RECORDING_OPTION_IOS_OUTPUT_FORMAT_MPEG4TWINVQ } from 'expo-av/build/Audio';
 
 class Fire {
     constructor() {
@@ -39,7 +43,7 @@ class Fire {
     
     //Ajout dans la base de la publication
     addPost = async ({text, localUri}) => {
-        const remoteUri = await this.uploadPhotoAsync(localUri, `photos/${this.uid}/${Date.now()}`);
+        const remoteUri = await this.uploadPhotoAsync(localUri, `videos/${this.uid}/${Date.now()}`);
 
         return new Promise((res, rej) => {
             this.firestore
@@ -48,7 +52,7 @@ class Fire {
                 text,
                 uid: this.uid,
                 timestamp: this.timestamp,
-                image: remoteUri
+                video: remoteUri
             })
             .then(ref => {
                 res(ref)

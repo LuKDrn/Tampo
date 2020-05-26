@@ -1,6 +1,11 @@
 import React from 'react'
-import { Text, StyleSheet, View, TouchableOpacity, TextInput, Image, StatusBar, AsyncStorage, SafeAreaView } from 'react-native'
+import { Text, StyleSheet, View, TouchableOpacity, TextInput, Image, StatusBar, AsyncStorage, SafeAreaView, TouchableWithoutFeedback, Keyboard } from 'react-native'
 import * as firebase from 'firebase'
+const DismissKeyboard = ({ children }) => (
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        {children}
+    </TouchableWithoutFeedback>
+);
 class Login extends React.Component {
     state = {
         email: '',
@@ -38,6 +43,7 @@ class Login extends React.Component {
                         <Text style={styles.inputTitle}>Adresse mail</Text>
                         <TextInput style={styles.input}
                             onChangeText={(email) => this.setState({ email })}
+                            onSubmitEditing={DismissKeyboard}
                             value={this.state.email}
                             autoCapitalize='none' />
                     </View>
@@ -45,6 +51,7 @@ class Login extends React.Component {
                         <Text style={styles.inputTitle}>Mot de passe</Text>
                         <TextInput style={styles.input} secureTextEntry
                             onChangeText={(password) => this.setState({ password })}
+                            onSubmitEditing={DismissKeyboard}
                             value={this.state.password} />
                     </View>
                 </View>

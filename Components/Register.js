@@ -1,10 +1,16 @@
 import React from 'react';
-import { View, TouchableOpacity, TextInput, Text, StyleSheet, SafeAreaView, StatusBar, LayoutAnimation, Image } from 'react-native';
+import { View, TouchableOpacity, TextInput, Text, StyleSheet, SafeAreaView, StatusBar, LayoutAnimation, Image,TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'
 import * as firebase from 'firebase';
 import UserPermissions from '../Utilities/UserPermissions';
 import * as ImagePicker from 'expo-image-picker';
 import Fire from "../Fire";
+
+const DismissKeyboard = ({ children }) => (
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        {children}
+    </TouchableWithoutFeedback>
+);
 
 export default class Register extends React.Component {
     state = {
@@ -38,6 +44,7 @@ export default class Register extends React.Component {
         LayoutAnimation.easeInEaseOut();
 
         return (
+            <DismissKeyboard>
             <SafeAreaView style={styles.container}>
                 <StatusBar barStyle="light-content"></StatusBar>
 
@@ -65,6 +72,7 @@ export default class Register extends React.Component {
                             <Text style={styles.inputTitle}>Nom complet</Text>
                             <TextInput style={styles.input}
                                 onChangeText={name=> this.setState({ user: { ...this.state.user, name} })}
+                                onSubmitEditing={DismissKeyboard}
                                 value={this.state.user.name}
                                 autoCapitalize='none' />
                         </View>
@@ -72,6 +80,7 @@ export default class Register extends React.Component {
                             <Text style={styles.inputTitle}>Adresse mail</Text>
                             <TextInput style={styles.input}
                                 onChangeText={email => this.setState({ user: { ...this.state.user, email} })}
+                                onSubmitEditing={DismissKeyboard}
                                 value={this.state.user.email}
                                 autoCapitalize='none' />
                         </View>
@@ -79,13 +88,15 @@ export default class Register extends React.Component {
                             <Text style={styles.inputTitle}>Mot de passe</Text>
                             <TextInput style={styles.input} secureTextEntry
                                       onChangeText={password => this.setState({ user: { ...this.state.user, password} })}
+                                      onSubmitEditing={DismissKeyboard}
                                       value={this.state.user.password} />
                         </View>
                         {/* <View style={{ marginTop: 20 }}>
                             <Text style={styles.inputTitle}>Confirmer votre mot de passe</Text>
                             <TextInput 
                                     style={styles.input} secureTextEntry 
-                                    onChangeText={(password) => this.setState({ user: { ...this.state.user, password} })}/>
+                                    onChangeText={(password) => this.setState({ user: { ...this.state.user, password} })}
+                                    onSubmitEditing={DismissKeyboard}/>
                         </View> */}
                     </View>
 
@@ -100,6 +111,7 @@ export default class Register extends React.Component {
                     </View>
                 </View>
             </SafeAreaView>
+            </DismissKeyboard>
         )
     }
 }
