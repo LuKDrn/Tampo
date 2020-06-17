@@ -2,10 +2,10 @@
 // Author : Lucas DEROUIN
 
 import React from 'react'
-import { View, Text, StyleSheet, SafeAreaView, Image, FlatList, ImageBackground, Dimensions } from 'react-native'
+import { View, Text, StyleSheet, SafeAreaView, Image, FlatList, Dimensions, Alert } from 'react-native'
 import { Video } from 'expo-av'
 import * as firebase from 'firebase'
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableOpacity, LongPressGestureHandler } from 'react-native-gesture-handler';
 import { Ionicons, AntDesign, SimpleLineIcons } from "@expo/vector-icons";
 import moment from "moment";
 import Fire from '../Fire';
@@ -15,9 +15,8 @@ var posts = [];
 export default class Home extends React.Component {
     componentDidMount() {
         //On récupère la base "Posts"
-        var lesPosts = Fire.shared.firestore.collection('posts').get();
-
-        //On récupère tous les Posts
+        var lesPosts = Fire.shared.firestore.collection('posts').orderBy("timestamp", "desc").limit(10).get();
+        //On récupère tous les Posts souhaités
         lesPosts.then(function (query) {
             query.forEach(function (doc) {
                 const { video, text, timestamp, uid } = doc.data();
@@ -31,6 +30,7 @@ export default class Home extends React.Component {
                                 video,
                                 text,
                                 timestamp,
+                                uid,
                                 user: documentSnapshot.data()
                             });
                         }
@@ -42,6 +42,7 @@ export default class Home extends React.Component {
                                 video,
                                 text,
                                 timestamp,
+                                uid: null,
                                 user: null
                             });
                         }
@@ -50,38 +51,53 @@ export default class Home extends React.Component {
         })
     };
 
+    moreOptions = (post, user) => {
+        if (post.uid === user) {
+            console.log("Le bon utilisateur")
+        }
+        else {
+            console.log("Pas l'utilisateur correspondant !")
+        }
+    }
+
 
     renderPost = post => {
         return (
             <View style={styles.feedItem}>
-                <View style={{zIndex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                    <TouchableOpacity style={{ flexDirection: "row" }}>
-                        <Image source={
-                            post.user.avatar ? { uri: post.user.avatar }
-                                : require("../Images/music_icon.png")
-                        } style={styles.avatar}
-                            resizeMode="cover" />
-                        <View style={{ flexDirection: "column" }}>
-                            <Text style={styles.name}>{post.user.name}</Text>
-                            <Text style={styles.timestamp}>{moment(post.timestamp).fromNow()}</Text>
-                        </View>
+                <Video source={post.video ? { uri: post.video } : require("../Images/music_icon.png")}
+                    shouldPlay={false}
+                    isLooping={false}
+                    useNativeControls
+                    style={styles.videoPost} />
+                <View style={{ position: "absolute", top: "5%", zIndex: 1 }}>
+                    <View style={styles.postHeader}>
+                        <TouchableOpacity style={{ flexDirection: "row" }}>
+                            <Image source={
+                                post.user.avatar ? { uri: post.user.avatar }
+                                    : require("../Images/music_icon.png")
+                            } style={styles.avatar}
+                                resizeMode="cover" />
+                            <View style={{ flexDirection: "column" }}>
+                                <Text style={styles.name}>{post.user.name}</Text>
+                                <Text style={styles.timestamp}>{moment(post.timestamp).fromNow()}</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity>
+                            <Ionicons name="ios-more" size={24} color="#FFF" />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                <View style={{position: "absolute", bottom: "10%", marginHorizontal: 15}}>
+                <Text style={styles.post}>{post.text}</Text>
+                <View style={{flexDirection: "row"}}>
+                <TouchableOpacity>
+                        <AntDesign name="closecircleo" size={48} color="#E61E6E" style={{ marginHorizontal: 12 }} />
                     </TouchableOpacity>
                     <TouchableOpacity>
-                        <Ionicons name="ios-more" size={24} color="#14142d" />
+                        <AntDesign name="hearto" size={48} color="#E616E6" style={{ marginHorizontal: 12 }} />
                     </TouchableOpacity>
                 </View>
-                <Text style={styles.post}>{post.text}</Text>
-                    <Video source={post.video ? { uri: post.video } : require("../Images/music_icon.png")}
-                        shouldPlay={false}
-                        isLooping={false}
-                        useNativeControls
-                        style={styles.videoPost} />
-                    {/* <TouchableOpacity>
-                        <AntDesign name="closecircleo" size={64} color="#E61E6E" style={{ marginHorizontal: 12 }} />
-                    </TouchableOpacity>
-                    <TouchableOpacity>
-                        <AntDesign name="hearto" size={64} color="#E616E6" style={{ marginHorizontal: 12 }} />
-                    </TouchableOpacity> */}
+                </View>
             </View>
         );
     };
@@ -116,31 +132,41 @@ const styles = StyleSheet.create({
     },
     feedItem: {
         height: Dimensions.get('window').height * 1,
-        backgroundColor: "#FFF",
+        backgroundColor: "#14142d",
         borderRadius: 5,
         padding: 8,
         flexDirection: "column",
         marginBottom: 32,
+        borderWidth: 2,
+        borderColor: "#FFF"
     },
     avatar: {
-        width: 48,
-        height: 48,
-        borderRadius: 24,
-        marginRight: 16
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        marginRight: 16,
+        borderWidth: 2,
+        borderColor: "#FFF"
     },
     name: {
-        fontSize: 18,
+        fontSize: 22,
         fontWeight: 'bold',
-        color: "#14142d"
+        color: "#FFF"
     },
     timestamp: {
         fontSize: 11,
-        color: '#C4C6CE',
+        color: '#FFF',
         marginTop: 4
+    },
+    postHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginHorizontal: 25
     },
     post: {
         fontSize: 14,
-        color: "black",
+        color: "#FFF",
         marginVertical: 12,
         marginHorizontal: 5,
         alignItems: 'center',
@@ -148,9 +174,9 @@ const styles = StyleSheet.create({
         zIndex: 1
     },
     videoPost: {
-        height: Dimensions.get('window').height * 1,
-        zIndex: 0,
-        top: 0
-
+        height: Dimensions.get('window').height * 0.95,
+        zIndex: -1,
+        marginTop: -7,
+        borderRadius: 8
     }
 });

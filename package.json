@@ -12,6 +12,7 @@
     "eslint-plugin-react-hooks": "^4.0.0",
     "expo": "~36.0.0",
     "expo-av": "^8.0.0",
+    "expo-cli": "^3.21.5",
     "expo-constants": "^8.0.0",
     "expo-image-picker": "^8.0.1",
     "expo-permissions": "^8.0.0",
