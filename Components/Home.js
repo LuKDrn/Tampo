@@ -21,7 +21,7 @@ class Home extends React.Component {
         }
     }
 
-    componentDidMount() {
+    componentWillMount() {
         //On récupère la base "Posts"
         this.setState({ isLoading: true })
         var lesPosts = Fire.shared.firestore.collection('posts').where("uid", "<", this.state.user).limit(10).get();
@@ -145,7 +145,6 @@ class Home extends React.Component {
     };
 
     render() {
-        console.log(this.state.posts);
         return (
             <SafeAreaView style={{ flex: 1, backgroundColor: "#14142d", }}>
                 <FlatList

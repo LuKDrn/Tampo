@@ -1,6 +1,6 @@
 import React from 'react';
 import Fire from '../Fire';
-import { View, ActivityIndicator, StatusBar, AsyncStorage, StyleSheet } from 'react-native';
+import { View, ActivityIndicator, StatusBar, AsyncStorage, StyleSheet, TouchableOpacity } from 'react-native';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
@@ -14,10 +14,11 @@ import Home from '../Components/Home';
 import Chat from '../Components/Chat';
 import Notification from '../Components/Notification';
 import Post from '../Components/Post';
-import Profile from '../Components/Profile';
+import MyProfile from '../Components/MyProfile';
 
 import * as firebase from 'firebase'
 import { color } from 'react-native-reanimated';
+import RegisterSecond from '../Components/RegisterSecond';
 
 const AppContainer = createStackNavigator (
     {
@@ -26,7 +27,8 @@ const AppContainer = createStackNavigator (
                     Accueil: {
                         screen: Home,
                         navigationOptions: {
-                            tabBarIcon: ({ tintColor }) => <AntDesign 
+                            tabBarIcon: ({ tintColor }) => 
+                            <AntDesign 
                             name="home" 
                             size={24} 
                             color={tintColor}/>
@@ -60,8 +62,8 @@ const AppContainer = createStackNavigator (
                             color={tintColor} />
                         }
                     },
-                    Profil : {
-                        screen: Profile,
+                    MyProfil : {
+                        screen: MyProfile,
                         navigationOptions: {
                             tabBarIcon: ({ tintColor }) => <AntDesign 
                             name="user" 
@@ -116,12 +118,18 @@ const AuthStack = createStackNavigator({
             headerShown: false
         }
     },
+    RegisterSecond: {
+        screen: RegisterSecond,
+        navigationOptions: {
+            headerShown: false
+        }
+    }
 })
 
 export default createAppContainer(
     createSwitchNavigator(
         {
-            Loading: Loading,
+            Loading: RegisterSecond,
             App: AppContainer,
             Auth: AuthStack,
         },

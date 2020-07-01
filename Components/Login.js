@@ -31,6 +31,7 @@ class Login extends React.Component {
 
     render() {
         return (
+            <DismissKeyboard>
             <SafeAreaView style={styles.container}>
                 <StatusBar backgroundColor='#14142d' barStyle="light-content" />
                 <Image source={require('../Images/Logo_complete.png')} style={styles.logo} />
@@ -65,6 +66,7 @@ class Login extends React.Component {
                     </TouchableOpacity>
                 </View>
             </SafeAreaView>
+            </DismissKeyboard>
         )
     }
 }

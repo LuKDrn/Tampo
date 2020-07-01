@@ -1,7 +1,6 @@
 import React from 'react';
-import { View, TouchableOpacity, TextInput, Text, StyleSheet, SafeAreaView, StatusBar, LayoutAnimation, Image,TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, TouchableOpacity, TextInput, Text, StyleSheet, SafeAreaView, StatusBar, LayoutAnimation, Image, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { Ionicons } from '@expo/vector-icons'
-import * as firebase from 'firebase';
 import UserPermissions from '../Utilities/UserPermissions';
 import * as ImagePicker from 'expo-image-picker';
 import Fire from "../Fire";
@@ -13,104 +12,102 @@ const DismissKeyboard = ({ children }) => (
 );
 
 export default class Register extends React.Component {
-    state = {
-        user : {
-            name: "",
-            email: '',
-            password: '',
-            avatar: "",
-        },
-        errorMessage: null,
-    };
+    constructor(props) {
+        super(props);
+        this.state = {
+            user: {
+                name: "",
+                email: '',
+                password: '',
+                avatar: "",
+            },
+            errorMessage: null,
+            disable: true
+        };
+    }
 
+    //Séléctionné un avatar
     handlePickAvatar = async () => {
         UserPermissions.getCameraPermission()
-        
+
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [4, 3]
         });
         if (!result.cancelled) {
-            this.setState({ user : { ...this.state.user, avatar: result.uri} }),
-            avatar => this.setState({ user: {...this.state.user.avatar, avatar} })
+            this.setState({ user: { ...this.state.user, avatar: result.uri } }),
+                avatar => this.setState({ user: { ...this.state.user.avatar, avatar } })
         }
     }
-    handleSignUp = () => {
-        Fire.shared.createUser(this.state.user);
-    };
 
     render() {
         LayoutAnimation.easeInEaseOut();
-
+        const user = this.state.user;
+        if (!user.email == '' && !user.name == '' && !user.password == '') {
+            this.state.disable = false
+        } 
         return (
             <DismissKeyboard>
-            <SafeAreaView style={styles.container}>
-                <StatusBar barStyle="light-content"></StatusBar>
+                <SafeAreaView style={styles.container}>
+                    <StatusBar barStyle="light-content"></StatusBar>
 
-                <View style={styles.header}>
-                    <TouchableOpacity style={styles.back} onPress={() => this.props.navigation.goBack()}>
-                        <Ionicons name="ios-arrow-round-back" size={32} color={"#FFF"}></Ionicons>
-                    </TouchableOpacity>
-                </View>
-
-                <View style={styles.inputContainer}>
-                    <View style={styles.errorMessage}>
-                        {this.state.errorMessage && <Text style={styles.error}>{this.state.errorMessage}</Text>}
+                    <View style={styles.header}>
+                        <TouchableOpacity style={styles.back} onPress={() => this.props.navigation.goBack()}>
+                            <Ionicons name="ios-arrow-round-back" size={32} color={"#FFF"}></Ionicons>
+                        </TouchableOpacity>
                     </View>
+
+                    <View style={styles.inputContainer}>
+                        <View style={styles.errorMessage}>
+                            {this.state.errorMessage && <Text style={styles.error}>{this.state.errorMessage}</Text>}
+                        </View>
                         <TouchableOpacity style={styles.avatarPlaceholder} onPress={this.handlePickAvatar}>
                             <Image source={{ uri: this.state.user.avatar }} style={styles.avatar} />
-                            <Ionicons 
+                            <Ionicons
                                 name="ios-add"
                                 size={40}
-                                color="#14142d">                            
+                                color="#14142d">
                             </Ionicons>
                         </TouchableOpacity>
-                    <Text style={{color: "#FFF",marginVertical: 20, fontSize: 12,textTransform: "uppercase"}}>Photo de profil</Text>
-                    <View style={styles.form}>
-                        <View>
-                            <Text style={styles.inputTitle}>Nom complet</Text>
-                            <TextInput style={styles.input}
-                                onChangeText={name=> this.setState({ user: { ...this.state.user, name} })}
-                                onSubmitEditing={DismissKeyboard}
-                                value={this.state.user.name}
-                                autoCapitalize='none' />
+                        <Text style={{color: "#FFF",marginVertical: 20, fontSize: 12,textTransform: "uppercase"}}>Photo de profil</Text>
+                        <View style={styles.form}>
+                            <View>
+                                <Text style={styles.inputTitle}>Nom complet</Text>
+                                <TextInput style={styles.input}
+                                    onChangeText={name => this.setState({ user: { ...this.state.user, name } })}
+                                    onSubmitEditing={DismissKeyboard}
+                                    value={this.state.user.name}
+                                    autoCapitalize='none' />
+                            </View>
+                            <View style={{ marginTop: 20 }}>
+                                <Text style={styles.inputTitle}>Adresse mail</Text>
+                                <TextInput style={styles.input}
+                                    onChangeText={email => this.setState({ user: { ...this.state.user, email } })}
+                                    onSubmitEditing={DismissKeyboard}
+                                    value={this.state.user.email}
+                                    autoCapitalize='none' />
+                            </View>
+                            <View style={{ marginTop: 20 }}>
+                                <Text style={styles.inputTitle}>Mot de passe</Text>
+                                <TextInput style={styles.input} secureTextEntry
+                                    onChangeText={password => this.setState({ user: { ...this.state.user, password } })}
+                                    onSubmitEditing={DismissKeyboard}
+                                    value={this.state.user.password} />
+                            </View>
                         </View>
-                        <View style={{ marginTop: 20 }}>
-                            <Text style={styles.inputTitle}>Adresse mail</Text>
-                            <TextInput style={styles.input}
-                                onChangeText={email => this.setState({ user: { ...this.state.user, email} })}
-                                onSubmitEditing={DismissKeyboard}
-                                value={this.state.user.email}
-                                autoCapitalize='none' />
-                        </View>
-                        <View style={{ marginTop: 20 }}>
-                            <Text style={styles.inputTitle}>Mot de passe</Text>
-                            <TextInput style={styles.input} secureTextEntry
-                                      onChangeText={password => this.setState({ user: { ...this.state.user, password} })}
-                                      onSubmitEditing={DismissKeyboard}
-                                      value={this.state.user.password} />
-                        </View>
-                        {/* <View style={{ marginTop: 20 }}>
-                            <Text style={styles.inputTitle}>Confirmer votre mot de passe</Text>
-                            <TextInput 
-                                    style={styles.input} secureTextEntry 
-                                    onChangeText={(password) => this.setState({ user: { ...this.state.user, password} })}
-                                    onSubmitEditing={DismissKeyboard}/>
-                        </View> */}
-                    </View>
 
-                    <TouchableOpacity style={styles.userBtnRegister} onPress={this.handleSignUp}>
-                        <Text style={styles.textBtn}>Que l'aventure commence ! </Text>
-                    </TouchableOpacity>
-                    <View style={styles.btnContainer}>
-                        <TouchableOpacity onPress={() => this.props.navigation.navigate('Loading')}>
-                            <Text style={styles.textBtnCreate}>Déjà un compte ? </Text>
-                            <Text style={styles.textBtnCreate, { color: "#E616E6", textAlign: 'center', fontWeight: 'bold' }}>Utilise-le  </Text>
+                        <TouchableOpacity style={styles.userBtnRegister} disabled={this.state.disable} onPress={() => this.props.navigation.navigate('RegisterSecond', {userName: this.state.user.name, userMail: this.state.user.email, userAvatar: this.state.user.avatar, userPassword: this.state.user.password})}>
+                            <Text style={styles.textBtn}>Continuer </Text>
                         </TouchableOpacity>
+                    <View style={styles.btnContainer}>
+                            <TouchableOpacity onPress={() => this.props.navigation.navigate('Loading')}>
+                                <Text style={styles.textBtnCreate}>Déjà un compte ? </Text>
+                                <Text style={styles.textBtnCreate, { color: "#E616E6", textAlign: 'center', fontWeight: 'bold' }}>Utilise-le  </Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                </View>
-            </SafeAreaView>
+                </SafeAreaView>
             </DismissKeyboard>
         )
     }
@@ -141,7 +138,7 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         justifyContent: 'center',
-        alignItems: 'center',      
+        alignItems: 'center',
     },
     avatarPlaceholder: {
         backgroundColor: '#E1E2E6',

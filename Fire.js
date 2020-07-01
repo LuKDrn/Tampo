@@ -2,7 +2,6 @@
 // Author : Lucas DEROUIN
 
 import * as firebase from 'firebase';
-import { RECORDING_OPTION_IOS_OUTPUT_FORMAT_MPEG4TWINVQ } from 'expo-av/build/Audio';
 
 class Fire {
     constructor() {
@@ -20,24 +19,22 @@ class Fire {
     //Création d'un utilisateur 
     createUser = async user => {
         let remoteUri= null
-
+        console.log(user);
         try {
             await firebase.auth().createUserWithEmailAndPassword(user.email, user.password)
-
             let db = this.firestore.collection("users").doc(this.uid)
             db.set({
                 name: user.name,
                 email: user.email,
                 avatar: "",
             })
-
             if (user.avatar){
                 remoteUri = await this.uploadPhotoAsync(user.avatar, `avatars/${this.uid}`);
                 db.set({avatar: remoteUri}, {merge: true});
             }
         }
         catch (error) {
-            alert("Erreur: ", error);
+            alert(error);
         }
     }
     

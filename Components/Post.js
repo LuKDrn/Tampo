@@ -117,7 +117,7 @@ export default class Post extends React.Component {
                         isLooping={false}
                         useNativeControls
                         resizeMode="cover"
-                        style={{ width: "100%", height: "100%" }} />
+                        style={{ height: Dimensions.get('window').height * 0.5, borderRadius: 8 }} />
                 </View>
             </SafeAreaView>
             </DismissKeyboard>
