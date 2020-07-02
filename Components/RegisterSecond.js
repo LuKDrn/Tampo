@@ -2,7 +2,6 @@
 import React, { Component } from 'react';
 //import react in our code.
 import { StyleSheet, View, Text, TouchableWithoutFeedback, SafeAreaView, StatusBar, LayoutAnimation, TouchableOpacity, Keyboard, Dimensions } from 'react-native';
-import MultiSelect from 'react-native-multi-select';
 import { Ionicons } from '@expo/vector-icons'
 import Fire from "../Fire";
 import { add } from 'react-native-reanimated';
@@ -13,7 +12,6 @@ const DismissKeyboard = ({ children }) => (
         {children}
     </TouchableWithoutFeedback>
 );
-var instrumentsSelected = [];
 const instumentsItems = [{
     name: 'Guitare',
 },
@@ -64,18 +62,6 @@ class RegisterSecond extends React.Component {
             errorMessage: null,
         })
     }
-    onSelectedInstrumentsChange = instrument => {
-        instrumentsSelected.push(instrument);
-        console.log(instrumentsSelected);
-    };
-
-    onSelectedGenresChange = genres => {
-        this.state.user.genres.push(genres);
-    };
-    onSelectedPratiquesChange = pratiques => {
-        this.state.user.pratiques.push(pratiques);
-    };
-
     // handleSignUp = (user) => {
     //     Fire.shared.createUser(user);
     // };
@@ -98,73 +84,13 @@ class RegisterSecond extends React.Component {
 
                         <View style={styles.form}>
                             <View style={{ marginVertical: 20 }}>
-                                <Text style={styles.inputTitle}>Instrument(s)</Text>
-                                <MultiSelect
-                                    hideTags
-                                    items={instumentsItems}
-                                    uniqueKey="name"
-                                    ref={(component) => { this.multiSelect = component }}
-                                    onSelectedItemsChange={this.onSelectedInstrumentsChange}
-                                    selectText="Les instruments"
-                                    instruments={user.instruments}
-                                    searchInputPlaceholderText="Chercher un instrument..."
-                                    tagRemoveIconColor="#CCC"
-                                    tagBorderColor="#CCC"
-                                    tagTextColor="#CCC"
-                                    selectedItemTextColor="#CCC"
-                                    selectedItemIconColor="#CCC"
-                                    itemTextColor="#000"
-                                    displayKey="name"
-                                    searchInputStyle={{ color: '#CCC' }}
-                                    submitButtonColor="#E616E6"
-                                    submitButtonText="Submit"
-                                />
+                                <Text style={styles.inputTitle}>Instrument(s)</Text>                     
                                 <View style={{display: 'flex'}}>
                                 </View>
-                            </View>
-                            {/* <View style={{ marginVertical: 20 }}>
-                                <Text style={styles.inputTitle}>Genre(s)</Text>
-                                <MultiSelect
-                                    items={genresItems}
-                                    uniqueKey="name"
-                                    ref={(component) => { this.multiSelect = component }}
-                                    onSelectedItemsChange={this.onSelectedGenresChange}
-                                    selectText="Genres"
-                                    genres={genres}
-                                    searchInputPlaceholderText="Chercher un genre..."
-                                    tagRemoveIconColor="#CCC"
-                                    tagBorderColor="#CCC"
-                                    tagTextColor="#CCC"
-                                    selectedItemTextColor="#CCC"
-                                    selectedItemIconColor="#CCC"
-                                    itemTextColor="#000"
-                                    displayKey="name"
-                                    searchInputStyle={{ color: '#CCC' }}
-                                    submitButtonColor="#E616E6"
-                                    submitButtonText="Submit"
-                                />
-                            </View>
+                            </View>      
                             <View style={{ marginVertical: 20 }}>
                                 <Text style={styles.inputTitle}>Niveau de pratique</Text>
-                                <MultiSelect
-                                    items={pratiquesItems}
-                                    uniqueKey="name"
-                                    ref={(component) => { this.multiSelect = component }}
-                                    onSelectedItemsChange={this.onSelectedPratiquesChange}
-                                    selectText="Niveau de pratique"
-                                    instruments={pratiques}
-                                    tagRemoveIconColor="#CCC"
-                                    tagBorderColor="#CCC"
-                                    tagTextColor="#CCC"
-                                    selectedItemTextColor="#CCC"
-                                    selectedItemIconColor="#CCC"
-                                    itemTextColor="#000"
-                                    displayKey="name"
-                                    searchInputStyle={{ color: '#CCC' }}
-                                    submitButtonColor="#E616E6"
-                                    submitButtonText="Submit"
-                                />
-                            </View> */}
+                            </View> 
                         </View>
 
                         <TouchableOpacity style={styles.userBtnRegister} onPress={this.handleSignUp}>
