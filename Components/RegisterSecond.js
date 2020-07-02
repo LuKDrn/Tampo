@@ -1,10 +1,10 @@
 // Second screen which we will use to get the data
 import React, { Component } from 'react';
 //import react in our code.
-import { StyleSheet, View, Text, TouchableWithoutFeedback, SafeAreaView, StatusBar, LayoutAnimation, TouchableOpacity, Keyboard, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, TouchableWithoutFeedback, SafeAreaView, StatusBar, LayoutAnimation, TouchableOpacity, Keyboard, Dimensions, FlatList, Image } from 'react-native';
+import { Card } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons'
 import Fire from "../Fire";
-import { add } from 'react-native-reanimated';
 //import all the components we are going to use.
 
 const DismissKeyboard = ({ children }) => (
@@ -12,19 +12,37 @@ const DismissKeyboard = ({ children }) => (
         {children}
     </TouchableWithoutFeedback>
 );
-const instumentsItems = [{
-    name: 'Guitare',
-},
-{
-    name: 'Piano',
-},
-{
-    name: 'Chant',
-},
-{
-    name: 'Batterie',
-}
-
+const instumentsItems = [
+    {
+        id: 1,
+        name: 'Guitare',
+        image: 'https://icons.iconarchive.com/icons/unclebob/spanish-travel/512/guitar-icon.png',
+        selected: false
+    },
+    {
+        id: 2,
+        name: 'Piano',
+        image: 'https://cdn.icon-icons.com/icons2/898/PNG/512/grand_piano_musical_instrument_icon-icons.com_69215.png',
+        selected: false
+    },
+    {
+        id: 3,
+        name: 'Chant',
+        image: 'https://image.flaticon.com/icons/png/512/1028/1028382.png',
+        selected: false
+    },
+    {
+        id: 4,
+        name: 'Batterie',
+        image: 'https://images.vexels.com/media/users/3/184277/isolated/preview/0818d1014d8faaf2b3524ebcff2c0685-music-drums-icon-by-vexels.png',
+        selected: false
+    },
+    {
+        id: 5,
+        name: 'Basse',
+        image: 'https://cdn.icon-icons.com/icons2/661/PNG/512/bass-guitar_icon-icons.com_60128.png',
+        selected: false
+    }
 ]
 const genresItems = [{
     name: 'Rock',
@@ -46,6 +64,7 @@ const pratiquesItems = [{
     name: 'Loisir'
 }]
 
+
 class RegisterSecond extends React.Component {
     constructor(props) {
         super(props);
@@ -62,6 +81,22 @@ class RegisterSecond extends React.Component {
             errorMessage: null,
         })
     }
+    onPressHandler(name) {
+        let renderData = [instumentsItems];
+        for (let data of renderData) {
+            if (data.name === name) {
+                console.log(data.selected);
+                data.selected = (data.selected == null) ? true : !data.selected;
+                break;
+            }
+        }
+        this.setState(prevState => {
+            let user = Object.assign({}, prevState.user);  // creating copy of state variable jasper
+            user.instruments.push(name);  // update the name property, assign a new value                    
+            return { user }
+        })
+    }
+
     // handleSignUp = (user) => {
     //     Fire.shared.createUser(user);
     // };
@@ -69,7 +104,6 @@ class RegisterSecond extends React.Component {
     render() {
         LayoutAnimation.easeInEaseOut();
         const user = this.state;
-        console.log(user);
         return (
             <DismissKeyboard>
                 <SafeAreaView style={styles.container}>
@@ -84,13 +118,43 @@ class RegisterSecond extends React.Component {
 
                         <View style={styles.form}>
                             <View style={{ marginVertical: 20 }}>
-                                <Text style={styles.inputTitle}>Instrument(s)</Text>                     
-                                <View style={{display: 'flex'}}>
+                                <Text style={styles.inputTitle}>Instrument(s)</Text>
+                                <View style={{ display: 'flex' }}>
+                                    <FlatList
+                                        horizontal={true}
+                                        data={instumentsItems}
+                                        keyExtractor={item => item.name}
+                                        showsHorizontalScrollIndicator={true}
+                                        renderItem={({ item }) => (
+                                            <TouchableOpacity onPress={() => this.onPressHandler(item.name)} style={{ marginHorizontal: 5, color: '#FFF' }}>
+                                                <Card
+                                                    style={
+                                                        item.selected == true
+                                                            ? {
+                                                                padding: 10,
+                                                                borderRadius: 5,
+                                                                backgroundColor: '#75EAEA',
+                                                            }
+                                                            : {
+                                                                padding: 10,
+                                                                borderRadius: 5,
+                                                                backgroundColor: '#333333',
+                                                                textAlign:'center',
+                                                                justifyContent: 'center'
+                                                            }
+                                                    }>
+                                                    <Image style={styles.iconItem}
+                                                        source={{ uri: item.image, }} />
+                                                    <Text style={{ fontWeight: 'bold', color: '#FFF' }}>{item.name}</Text>
+                                                </Card>
+                                            </TouchableOpacity>
+                                        )}
+                                    />
                                 </View>
-                            </View>      
+                            </View>
                             <View style={{ marginVertical: 20 }}>
                                 <Text style={styles.inputTitle}>Niveau de pratique</Text>
-                            </View> 
+                            </View>
                         </View>
 
                         <TouchableOpacity style={styles.userBtnRegister} onPress={this.handleSignUp}>
@@ -175,24 +239,11 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginVertical: 2
     },
-    buttonRemove: {
-        width: '30%',
-        backgroundColor: '#E616E6',
-        color: '#FFF',
-        padding: 15,
-        marginVertical: 15,
-        borderRadius: 4,
-        height: 24,
-        justifyContent: 'center',
-        alignItems: 'center'
+    iconItem: {
+        width: 44,
+        height: 44,
+        borderRadius: 68,
     },
-    selectedText: {
-        color: '#FFF',
-        fontWeight: 'bold',
-        fontSize: 10,
-        textAlign: 'center',
-        marginHorizontal: 2
-    }
 })
 
 export default (RegisterSecond)
