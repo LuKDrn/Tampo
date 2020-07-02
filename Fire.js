@@ -19,7 +19,6 @@ class Fire {
     //Création d'un utilisateur 
     createUser = async user => {
         let remoteUri= null
-        console.log(user);
         try {
             await firebase.auth().createUserWithEmailAndPassword(user.email, user.password)
             let db = this.firestore.collection("users").doc(this.uid)
@@ -27,6 +26,10 @@ class Fire {
                 name: user.name,
                 email: user.email,
                 avatar: "",
+                sexe: user.sexe,
+                instruments: user.instruments,
+                styles: user.styles,
+                pratiques: user.pratiques
             })
             if (user.avatar){
                 remoteUri = await this.uploadPhotoAsync(user.avatar, `avatars/${this.uid}`);

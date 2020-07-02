@@ -40,7 +40,6 @@ export default class Register extends React.Component {
                 avatar => this.setState({ user: { ...this.state.user.avatar, avatar } })
         }
     }
-
     render() {
         LayoutAnimation.easeInEaseOut();
         const user = this.state.user;

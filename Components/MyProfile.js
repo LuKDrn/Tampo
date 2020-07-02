@@ -38,9 +38,9 @@ export default class MyProfile extends React.Component {
             .collection("users")
             .doc(user)
             .onSnapshot(doc => {
-                this.setState({ user: doc.data()});        
-            })
-
+                this.setState({ user: doc.data()});  
+                console.log(this.state.user);      
+            })  
             var lesPosts = Fire.shared.firestore.collection('posts').where("uid", "==", this.state.user).limit(10).get();
         };
 
@@ -63,7 +63,7 @@ export default class MyProfile extends React.Component {
     //     );
     // };
     render() {
-
+        const user = this.state.user;
         return (
             <SafeAreaView style={styles.container}>
                 {/* {this.profilIncomplet()} */}
@@ -72,17 +72,20 @@ export default class MyProfile extends React.Component {
                         <Image
                             style={styles.avatar}
                             source={
-                                this.state.user.avatar
-                                    ? { uri: this.state.user.avatar }
+                                user.avatar
+                                    ? { uri: user.avatar }
                                     : require("../Images/music_icon.png")
                             }
                         />
                     </View>
-                    <Text style={styles.name}>{this.state.user.name}</Text>
+                    <Text style={styles.name}>{user.name}</Text>
                 </View>
                 <TouchableOpacity style={{ alignItems: 'center' }} onPress={() => { Fire.shared.signOut() }}>
                     <Text style={{ color: "#E616E6" }}>Se déconnecter</Text>
                 </TouchableOpacity>
+                <View style={{ padding: 5, marginVertical: 20 }}>
+                    <Text style={{ color: "#FFF", fontWeight: 'bold', fontSize: 16, marginLeft: 25 }}>Genre(s)</Text>
+                </View>
                 <View style={{ padding: 5, marginVertical: 20 }}>
                     <Text style={{ color: "#FFF", fontWeight: 'bold', fontSize: 16, marginLeft: 25 }}>Vidéos(s)</Text>
                     {/* <FlatList

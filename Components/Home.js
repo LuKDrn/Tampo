@@ -118,7 +118,7 @@ class Home extends React.Component {
                                 post.user.avatar ? { uri: post.user.avatar }
                                     : require("../Images/music_icon.png")
                             } style={styles.avatar}
-                                resizeMode="cover" />
+                                />
                             <View style={{ flexDirection: "column" }}>
                                 <Text style={styles.name}>{post.user.name}</Text>
                                 <Text style={styles.timestamp}>{moment(post.timestamp).fromNow()}</Text>
