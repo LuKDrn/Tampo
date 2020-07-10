@@ -2,8 +2,8 @@
 // Author : Lucas DEROUIN
 
 import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Image, Dimensions } from 'react-native';
-import { Ionicons, FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
+import { View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Image, Dimensions, ActivityIndicator, Alert } from 'react-native';
+import { Ionicons,FontAwesome } from "@expo/vector-icons";
 import { Video } from 'expo-av';
 import * as firebase from 'firebase';
 import Fire from '../Fire';
@@ -16,18 +16,16 @@ export default class MyProfile extends React.Component {
             isLoading: false,
             user: {},
             videos: [],
-            userId: Fire.shared.uid
+            userId: this.props.navigation.state.params.userId
         }
     }
     _displayLoading() {
-        if (this.state.isLoading == true) {
-            return (
-                <View style={styles.loading_container}>
-                    <Text>Chargement...</Text>
-                    <ActivityIndicator size='large'></ActivityIndicator>
-                </View>
-            )
-        }
+        return (
+            <View style={styles.loading_container}>
+                <Text>Chargement...</Text>
+                <ActivityIndicator size='large'></ActivityIndicator>
+            </View>
+        )
     }
     componentDidMount() {
         //Récupère les informations de l'utilisateur connecté
@@ -82,7 +80,7 @@ export default class MyProfile extends React.Component {
     renderVideo = (video) => {
         return (
             <View style={styles.feedItem}>
-                <Video source={{ uri: `${video.video}` }}
+                <Video source={{ uri: video.video }}
                     repeat={false}
                     volume={1}
                     useNativeControls={true}
@@ -97,49 +95,49 @@ export default class MyProfile extends React.Component {
     render() {
         const user = this.state.user;
         const videos = this.state.videos;
-        return (
-            <SafeAreaView style={styles.container}>
-                {this._displayLoading()}
-                {/* {this.profilIncomplet()} */}
-                <View style={styles.header}>
-                    <TouchableOpacity onPress={() => { Fire.shared.signOut() }}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 16, color: "#E616E6" }}>Se déconnecter</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={{ marginTop: 12, alignItems: "center" }}>
-                    <View style={styles.avatarContainer}>
-                        <Image
-                            style={styles.avatar}
-                            source={
-                                user.avatar
-                                    ? { uri: user.avatar }
-                                    : require("../Images/music_icon.png")
-                            }
-                        />
+        if (this.state.isLoading == false) {
+            return (
+                <SafeAreaView style={styles.container}>
+                    {/* {this.profilIncomplet()} */}
+                    <View style={styles.header}>
+                        <TouchableOpacity onPress={() => this.props.navigation.goBack()}>
+                            <FontAwesome name="remove" size={24} color="rgba(230,22,230, 0.8)"/>
+                        </TouchableOpacity>
                     </View>
-                    {this._displaySexe(user.sexe)}
-                    <Text style={styles.name}>{user.name}</Text>
-                    <View style={styles.underName}>
-                        <View style={{ flexDirection: 'column' }}>
-                            <Text style={{ color: "#FFF", fontWeight: 'bold', fontSize: 16, textAlign: 'center' }}>Ville : </Text>
-                            <View style={{ flexDirection: 'row', alignItems: 'cetner' }}>
-                                <FontAwesome name="map-marker" size={19} color="#E616E6" style={{ marginHorizontal: 5 }} />
-                                <Text style={{ color: "#E616E6", fontWeight: 'bold', fontSize: 19 }}>{user.city}</Text>
+                    <View style={{ marginTop: 12, alignItems: "center" }}>
+                        <View style={styles.avatarContainer}>
+                            <Image
+                                style={styles.avatar}
+                                source={
+                                    user.avatar
+                                        ? { uri: user.avatar }
+                                        : require("../Images/music_icon.png")
+                                }
+                            />
+                        </View>
+                        {this._displaySexe(user.sexe)}
+                        <Text style={styles.name}>{user.name}</Text>
+                        <View style={styles.underName}>
+                            <View style={{ flexDirection: 'column' }}>
+                                <Text style={{ color: "#FFF", fontWeight: 'bold', fontSize: 16, textAlign: 'center' }}>Ville : </Text>
+                                <View style={{ flexDirection: 'row', alignItems: 'cetner' }}>
+                                    <FontAwesome name="map-marker" size={19} color="#E616E6" style={{ marginHorizontal: 5 }} />
+                                    <Text style={{ color: "#E616E6", fontWeight: 'bold', fontSize: 19 }}>{user.city}</Text>
+                                </View>
+                            </View>
+                            <View style={{ flexDirection: 'column' }}>
+                                <Text style={{ color: "#FFF", fontWeight: 'bold', fontSize: 16, textAlign: 'center' }}>Instruments : </Text>
+                                <View stye={styles.instruments}>
+                                    <FlatList
+                                        data={user.instruments}
+                                        renderItem={({ item }) => <Text style={{ color: "#E616E6", fontWeight: 'bold', fontSize: 19, marginLeft: 5 }}>{item}</Text>}
+                                        showsVerticalScrollIndicator={false} />
+
+                                </View>
                             </View>
                         </View>
-                        <View style={{ flexDirection: 'column' }}>
-                            <Text style={{ color: "#FFF", fontWeight: 'bold', fontSize: 16, textAlign: 'center' }}>Instruments : </Text>
-                        <View stye={styles.instruments}>
-                        <FlatList
-                        data={user.instruments}
-                        renderItem={({ item }) => <Text style={{ color: "#E616E6", fontWeight: 'bold', fontSize: 19, marginLeft: 5 }}>{item}</Text>}
-                        showsVerticalScrollIndicator={false} />
-                            
-                        </View>
-                        </View>
                     </View>
-                </View>
-                <View style={{ padding: 5, marginVertical: 20, textAlign:'center' }}>
+                    <View style={{ padding: 5, marginVertical: 20, textAlign:'center' }}>
                     <Text style={{ color: "#FFF", fontWeight: 'bold', fontSize: 26, marginLeft: 25,textAlign: 'center' }}>Style(s)</Text>
                     <FlatList
                         horizontal={true}
@@ -147,17 +145,21 @@ export default class MyProfile extends React.Component {
                         renderItem={({ item }) => <Text style={{color:"#FFF", marginHorizontal: 5}}>{item}</Text>}
                         showsVerticalScrollIndicator={false} />
                 </View>
-                <View style={{ padding: 5, marginVertical: 20 }}>
-                    <Text style={{ color: "#FFF", fontWeight: 'bold', fontSize: 26, marginLeft: 25,textAlign:'center' }}>Vidéo(s)</Text>
-                    <FlatList
-                        horizontal={true}
-                        data={videos}
-                        keyExtractor={(item) => item.id.toString()}
-                        renderItem={({ item }) => this.renderVideo(item)}
-                        showsVerticalScrollIndicator={false} />
-                </View>
-            </SafeAreaView>
-        )
+                    <View style={{ padding: 5, marginVertical: 20 }}>
+                        <Text style={{ color: "#FFF", fontWeight: 'bold', fontSize: 16, marginLeft: 25 }}>Vidéos(s)</Text>
+                        <FlatList
+                            horizontal={true}
+                            data={videos}
+                            keyExtractor={(item) => item.id.toString()}
+                            renderItem={({ item }) => this.renderVideo(item)}
+                            showsVerticalScrollIndicator={false} />
+                    </View>
+                </SafeAreaView>
+            )
+        }
+        else {
+            { this._displayLoading() }
+        }
     }
 }
 
@@ -170,7 +172,7 @@ const styles = StyleSheet.create({
     header: {
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: 'flex-end',
+        justifyContent: 'flex-start',
         paddingHorizontal: 32,
         paddingTop: 8,
         shadowColor: "rgb(13, 16, 33)",

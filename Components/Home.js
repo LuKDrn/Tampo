@@ -2,7 +2,7 @@
 // Author : Lucas DEROUIN
 
 import React from 'react'
-import { View, Text, StyleSheet, SafeAreaView, Image, FlatList, Dimensions, ActivityIndicator, Button } from 'react-native'
+import { View, Text, StyleSheet, SafeAreaView, Image, FlatList, Dimensions, ActivityIndicator } from 'react-native'
 import { Video } from 'expo-av'
 import { Ionicons, AntDesign } from "@expo/vector-icons";
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -15,57 +15,43 @@ class Home extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            posts: undefined,
+            posts: [],
             isLoading: false,
             user: Fire.shared.uid
         }
     }
-
-    componentWillMount() {
+    componentDidMount() {
         //On récupère la base "Posts"
-        this.setState({ isLoading: true })
-        var lesPosts = Fire.shared.firestore.collection('posts').where("uid", "<", this.state.user).limit(10).get();
-        var postArray = [];
+        this.state.isLoading = true;
+        var lesPosts = Fire.shared.firestore.collection('posts').where("uid", "<=", this.state.user).limit(10).get();
+        var postArray = this.state.posts;
         //On récupère tous les Posts souhaités
         lesPosts.then(function (query) {
             query.forEach(function (doc) {
                 const { video, text, timestamp, uid } = doc.data();
                 //On récupère la base "users"
                 Fire.shared.firestore.collection('users')
-                    .doc(uid)
-                    .onSnapshot(function (documentSnapshot) {
-                        if (documentSnapshot.exists) {
-                            postArray.push({
-                                id: doc.id,
-                                video,
-                                text,
-                                timestamp,
-                                uid,
-                                user: documentSnapshot.data()
-                            });
-                        }
-                        else {
-                            // user sera null si l'utilisateur à supprimé son compte
-                            //On ajoute dans le tableau "posts"
-                            postArray.push({
-                                id: doc.id,
-                                video,
-                                text,
-                                timestamp,
-                                uid: null,
-                                user: null
-                            });
-                        }
+                .doc(uid)
+                .onSnapshot(function (documentSnapshot) {
+                    postArray.push({
+                            id: doc.id,
+                            video,
+                            text,
+                            timestamp,
+                            uid,
+                            user: documentSnapshot.data()
+                        });
                     });
+                })
             })
-        })
         this.setState({
             posts: postArray,
             isLoading: false
-        })
+        });
     };
+
     _displayLoading() {
-        if (this.state.isLoading) {
+        if (this.state.isLoading == true) {
             return (
                 <View style={styles.loading_container}>
                     <Text>Chargement...</Text>
@@ -75,7 +61,7 @@ class Home extends React.Component {
         }
     }
     _moreOptions = (post, user) => {
-        if(post.uid === user){
+        if (post.uid === user) {
             console.log("Oui")
         }
         else {
@@ -106,32 +92,36 @@ class Home extends React.Component {
     renderPost = post => {
         return (
             <View style={styles.feedItem}>
-                <Video source={post.video ? { uri: post.video } : require("../Images/music_icon.png")}
-                    shouldPlay={false}
-                    isLooping={false}
-                    useNativeControls
+                <Video source={{ uri: post.video }}
+                    rate={1.0}
+                    volume={1.0}
+                    repeat={true}
+                    useNativeControls={true}
+                    onBuffer={this.onBuffer}                // Callback when remote video is buffering
+                    onError={this.videoError}               // Callback when video cannot be loaded
+                    resizeMode="cover"
                     style={styles.videoPost} />
-                <View style={{ position: "absolute", top: "5%", zIndex: 1 }}>
+                <View style={{ position: "absolute", top: "2%", zIndex: 1 }}>
                     <View style={styles.postHeader}>
-                        <TouchableOpacity style={{ flexDirection: "row", position: "relative" }}>
+                        <TouchableOpacity style={{ flexDirection: "row", position: "relative" }} onPress={() => this.props.navigation.navigate("User", { userId: post.uid })}>
                             <Image source={
                                 post.user.avatar ? { uri: post.user.avatar }
                                     : require("../Images/music_icon.png")
                             } style={styles.avatar}
-                                />
+                            />
                             <View style={{ flexDirection: "column" }}>
                                 <Text style={styles.name}>{post.user.name}</Text>
                                 <Text style={styles.timestamp}>{moment(post.timestamp).fromNow()}</Text>
+                                <Text style={styles.post}>{post.text}</Text>
                             </View>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => this._moreOptions(post.id, this.state.user)} style={{ position: "relative" }}>
-                            <Ionicons name="ios-more" size={24} color="#FFF" />
+                            <Ionicons name="ios-more" size={24} color="#14142d" />
                         </TouchableOpacity>
                     </View>
                 </View>
-                <View style={{ position: "absolute", bottom: "10%", marginHorizontal: 15 }}>
-                    <Text style={styles.post}>{post.text}</Text>
-                    <View style={{ flexDirection: "row", position: "relative" }}>
+                <View style={{ position: "absolute", bottom: "10%", width: Dimensions.get('window').width }}>
+                    <View style={{ flexDirection: "row", justifyContent: 'center' }}>
                         <TouchableOpacity>
                             <AntDesign name="closecircleo" size={48} color="#E61E6E" style={{ marginHorizontal: 12 }} />
                         </TouchableOpacity>
@@ -145,10 +135,11 @@ class Home extends React.Component {
     };
 
     render() {
+        const posts = this.state.posts;
         return (
-            <SafeAreaView style={{ flex: 1, backgroundColor: "#14142d", }}>
+            <SafeAreaView style={{ flex: 1, flexDirection: 'column', backgroundColor: "#14142d", }}>
                 <FlatList
-                    data={this.state.posts}
+                    data={posts}
                     extra={this.props.favoritesVideo}
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item }) => this.renderPost(item)}
@@ -160,19 +151,15 @@ class Home extends React.Component {
 //CSS
 const styles = StyleSheet.create({
     feedItem: {
-        height: Dimensions.get('window').height * 1,
+        height: Dimensions.get('window').height,
         backgroundColor: "#14142d",
-        borderRadius: 5,
-        padding: 8,
         flexDirection: "column",
         marginBottom: 32,
-        borderWidth: 2,
-        borderColor: "#FFF"
     },
     avatar: {
-        width: 56,
-        height: 56,
-        borderRadius: 28,
+        width: 72,
+        height: 72,
+        borderRadius: 42,
         marginRight: 16,
         borderWidth: 2,
         borderColor: "#FFF"
@@ -180,33 +167,31 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 22,
         fontWeight: 'bold',
-        color: "#FFF"
+        color: "#14142d"
     },
     timestamp: {
         fontSize: 11,
-        color: '#FFF',
+        color: '#14142d',
         marginTop: 4
     },
     postHeader: {
         flexDirection: "row",
+        width: Dimensions.get('window').width * 0.8,
         justifyContent: "space-between",
         alignItems: "center",
         marginHorizontal: 25
     },
     post: {
-        fontSize: 14,
+        fontSize: 18,
         color: "#FFF",
-        marginVertical: 12,
-        marginHorizontal: 5,
-        alignItems: 'center',
+        marginVertical: 16,
         fontWeight: 'bold',
         zIndex: 1
     },
     videoPost: {
-        height: Dimensions.get('window').height * 0.95,
+        height: Dimensions.get('window').height * 1,
+        width: Dimensions.get('window').width,
         zIndex: -1,
-        marginTop: -7,
-        borderRadius: 8
     },
     loading_container: {
         position: 'absolute',

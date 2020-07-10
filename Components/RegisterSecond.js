@@ -5,8 +5,6 @@ import { StyleSheet, View, Text, TouchableWithoutFeedback, SafeAreaView, StatusB
 import { Card } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons'
 import Fire from "../Fire";
-import { cos } from 'react-native-reanimated';
-import { RECORDING_OPTION_IOS_OUTPUT_FORMAT_APPLELOSSLESS } from 'expo-av/build/Audio';
 //import all the components we are going to use.
 
 const DismissKeyboard = ({ children }) => (
@@ -125,6 +123,7 @@ class RegisterSecond extends React.Component {
                 email: this.props.navigation.getParam('userMail'),
                 password: this.props.navigation.getParam('userPassword'),
                 avatar: this.props.navigation.getParam('userAvatar'),
+                city: this.props.navigation.getParam('userCity'),
                 sexe: '',
                 instruments: [],
                 styles: [],

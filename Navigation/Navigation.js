@@ -15,7 +15,7 @@ import Chat from '../Components/Chat';
 import Notification from '../Components/Notification';
 import Post from '../Components/Post';
 import MyProfile from '../Components/MyProfile';
-
+import User from '../Components/User';
 import * as firebase from 'firebase'
 import { color } from 'react-native-reanimated';
 import RegisterSecond from '../Components/RegisterSecond';
@@ -95,14 +95,23 @@ const AppContainer = createStackNavigator (
                 }
             }
         ),
-        postModal: {
-            screen: Post
-        }
+        User: {
+            screen: User,
+            navigationOptions: {
+              title: 'Utilisateur'
+            }
+          },
+          Loading: {
+              screen: Loading,
+              navigationOptions: {
+                  title: "Chargement"
+              }
+          }
     },
     {
         mode: "modal",
         headerMode: "none"
-    }
+    },
 )
 
 const AuthStack = createStackNavigator({

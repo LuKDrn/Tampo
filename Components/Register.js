@@ -20,6 +20,7 @@ export default class Register extends React.Component {
                 email: '',
                 password: '',
                 avatar: "",
+                city: ""
             },
             errorMessage: null,
             disable: true
@@ -43,7 +44,7 @@ export default class Register extends React.Component {
     render() {
         LayoutAnimation.easeInEaseOut();
         const user = this.state.user;
-        if (!user.email == '' && !user.name == '' && !user.password == '') {
+        if (!user.email == '' && !user.name == '' && !user.password == '' && !user.city == '') {
             this.state.disable = false
         } 
         return (
@@ -88,15 +89,22 @@ export default class Register extends React.Component {
                                     autoCapitalize='none' />
                             </View>
                             <View style={{ marginTop: 20 }}>
-                                <Text style={styles.inputTitle}>Mot de passe</Text>
+                                <Text style={styles.inputTitle}>Mot de passe (6 caractères minimum)</Text>
                                 <TextInput style={styles.input} secureTextEntry
                                     onChangeText={password => this.setState({ user: { ...this.state.user, password } })}
                                     onSubmitEditing={DismissKeyboard}
                                     value={this.state.user.password} />
                             </View>
+                            <View style={{ marginTop: 20 }}>
+                                <Text style={styles.inputTitle}>Ville</Text>
+                                <TextInput style={styles.input}
+                                    onChangeText={city => this.setState({ user: { ...this.state.user, city } })}
+                                    onSubmitEditing={DismissKeyboard}
+                                    value={this.state.user.city} />
+                            </View>
                         </View>
 
-                        <TouchableOpacity style={styles.userBtnRegister} disabled={this.state.disable} onPress={() => this.props.navigation.navigate('RegisterSecond', {userName: this.state.user.name, userMail: this.state.user.email, userAvatar: this.state.user.avatar, userPassword: this.state.user.password})}>
+                        <TouchableOpacity style={styles.userBtnRegister} disabled={this.state.disable} onPress={() => this.props.navigation.navigate('RegisterSecond', {userName: this.state.user.name, userMail: this.state.user.email, userAvatar: this.state.user.avatar, userPassword: this.state.user.password, userCity : this.state.user.city})}>
                             <Text style={styles.textBtn}>Continuer </Text>
                         </TouchableOpacity>
                     <View style={styles.btnContainer}>

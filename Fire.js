@@ -26,6 +26,7 @@ class Fire {
                 name: user.name,
                 email: user.email,
                 avatar: "",
+                city: user.city,
                 sexe: user.sexe,
                 instruments: user.instruments,
                 styles: user.styles,
@@ -43,7 +44,7 @@ class Fire {
     
     //Ajout dans la base de la publication
     addPost = async ({text, localUri}) => {
-        const remoteUri = await this.uploadPhotoAsync(localUri, `videos/${this.uid}/${Date.now()}`);
+        const remoteUri = await this.uploadPhotoAsync(localUri);
 
         return new Promise((res, rej) => {
             this.firestore
@@ -64,14 +65,16 @@ class Fire {
     };
 
     // Téléchargement de la photos séléctionné
-    uploadPhotoAsync = async (uri, filename) => {
+    uploadPhotoAsync = async (uri) => {
+        const path = `videos/${this.uid}/${Date.now()}.mp4`;
+        
         return new Promise(async (res, rej) => {
             const response = await fetch(uri);
             const file = await response.blob();
 
             let upload = firebase
             .storage()
-            .ref(filename)
+            .ref(path)
             .put(file);
 
             upload.on(
