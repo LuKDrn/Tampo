@@ -11,7 +11,7 @@ export default class Chat extends React.Component {
 
     get user() {
         return {
-            _id: Fire.uid,
+            _id: Fire.shared.uid,
             name: this.props.navigation.state.displayName
         }
     }
@@ -47,7 +47,8 @@ export default class Chat extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#14142d'
+        backgroundColor: '#14142d',
+        paddingVertical: 15
     },
 })
 

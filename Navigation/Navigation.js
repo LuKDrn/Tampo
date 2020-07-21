@@ -1,6 +1,6 @@
 import React from 'react';
 import Fire from '../Fire';
-import { View, ActivityIndicator, StatusBar, AsyncStorage, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, ActivityIndicator, StatusBar, AsyncStorage, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
@@ -8,69 +8,60 @@ import { Ionicons,AntDesign,Entypo } from "@expo/vector-icons";
 
 import Login from '../Components/Login';
 import Register from '../Components/Register';
+import RegisterSecond from '../Components/RegisterSecond';
 import Loading from '../Components/Loading';
+
 
 import Home from '../Components/Home';
 import Chat from '../Components/Chat';
 import Notification from '../Components/Notification';
 import Post from '../Components/Post';
 import MyProfile from '../Components/MyProfile';
+import MyProfileInfo from '../Components/MyProfileInfo';
+import ProfileParameter from '../Components/ProfileParameter';
 import User from '../Components/User';
-import * as firebase from 'firebase'
-import { color } from 'react-native-reanimated';
-import RegisterSecond from '../Components/RegisterSecond';
 
 const AppContainer = createStackNavigator (
     {
         default : createBottomTabNavigator (
-                {
-                    Accueil: {
-                        screen: Home,
-                        navigationOptions: {
-                            tabBarIcon: ({ tintColor }) => 
-                            <AntDesign 
-                            name="home" 
-                            size={24} 
-                            color={tintColor}/>
-                        }
-                    },
-                    Messages : {
-                        screen: Chat,
-                        navigationOptions: {
-                            tabBarIcon: ({ tintColor }) => <Entypo 
-                            name="chat" 
-                            size={24} 
-                            color={tintColor}/>
-                        }
-                    },
-                    Publier: {
-                        screen: Post,
-                        navigationOptions: {
-                            tabBarIcon: ({ tintColor }) => <Ionicons
-                            name="ios-add-circle"
-                            size={44} 
-                            color={"#75EAEA"}
-                            />
-                        }
-                    },
-                    Notifications : {
-                        screen: Notification,
-                        navigationOptions: {
-                            tabBarIcon: ({ tintColor }) => <Entypo 
-                            name="notification" 
-                            size={24} 
+            {        
+                MyProfil: {
+                    screen: MyProfile,
+                    navigationOptions: {
+                        tabBarIcon: ({ tintColor }) => <AntDesign
+                            name="user"
+                            size={36}
                             color={tintColor} />
-                        }
-                    },
-                    MyProfil : {
-                        screen: MyProfile,
-                        navigationOptions: {
-                            tabBarIcon: ({ tintColor }) => <AntDesign 
-                            name="user" 
-                            size={24} 
-                            color={tintColor}/>
-                        }
                     }
+                },
+                Accueil: {
+                    screen: Home,
+                    navigationOptions: {
+                        tabBarIcon: ({ tintColor }) =>
+                            <AntDesign
+                                name="home"
+                                size={36}
+                                color={tintColor} />
+                    }
+                },
+                Notifications: {
+                    screen: Notification,
+                    navigationOptions: {
+                        tabBarIcon: ({ tintColor }) => <Ionicons 
+                        name="ios-notifications-outline" 
+                        size={36} 
+                        color={tintColor} />
+                    }
+                },
+                Messages: {
+                    screen: Chat,
+                    navigationOptions: {
+                        tabBarIcon: ({ tintColor }) => <Entypo
+                            name="chat"
+                            size={36}
+                            color={tintColor} />
+                    }
+                },
             },
             {
                 defaultNavigationOptions: {
@@ -84,13 +75,17 @@ const AppContainer = createStackNavigator (
                     }
                 },
                 tabBarOptions: {
-                    activeTintColor: "#75EAEA",
+                    activeTintColor: "#E616E6",
                     inactiveTintColor: "#FFF",
+                    lazyLoad: true,
                     showLabel: false,
                     style: {
-                        backgroundColor: '#14142d',
-                        borderWidth: 0,
-                        borderColor: "#14142d"
+                        backgroundColor: 'transparent',
+                        borderTopWidth: 0,
+                        position: 'absolute',
+                        marginTop: 10,
+                        width: Dimensions.get("window").width,
+
                     }
                 }
             }
@@ -101,10 +96,28 @@ const AppContainer = createStackNavigator (
               title: 'Utilisateur'
             }
           },
+          MyProfileInfo: {
+            screen: MyProfileInfo,
+            navigationOptions: {
+                title: 'Mon profil'
+            }
+          },
+          Post: {
+              screen: Post,
+              navigationOptions: {
+                  title: "Publier"
+              }
+          },
           Loading: {
               screen: Loading,
               navigationOptions: {
                   title: "Chargement"
+              }
+          },
+          ProileParameter: {
+              screen: ProfileParameter,
+              navigationOptions: {
+                  title: "Paramètres du profil"
               }
           }
     },
