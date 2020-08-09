@@ -21,38 +21,40 @@ class Home extends React.Component {
             user: Fire.shared.uid
         }
     }
-    getRandomDatas() {
+    async getRandomDatas() {
         //On récupère la base "Posts"
         this.state.isLoading = true;
         var postTempo = this.state.post;
-        var userTempo = this.state.userPost;
-        var postRef = Fire.shared.firestore.collection('posts').doc("A3hg7EkmZL9iscOQ3QAc");
-        postRef.onSnapshot(doc => {
-            if (doc.exists) {
-                postTempo = doc.data();
-                Fire.shared.firestore.collection('users')
-                    .doc(postTempo.uid)
-                    .onSnapshot(documentSnapshot => {
-                        userTempo = documentSnapshot.data();
-                        this.setState({
-                            post: postTempo,
-                            userPost: userTempo,
-                            isLoading: false
-                        })
-                    });
-            }
-            else {
-                // doc.data() will be undefined in this case
-                console.log("No such document!");
-            }
+        var userTempo = this.state.userPost;     
+        var firstQuery = Fire.shared.firestore.collection('posts').where("uid",">",this.state.user).limit(1).get();
+        var secondQuery = Fire.shared.firestore.collection('posts').where("uid","<",this.state.user).limit(1).get();
+        await (firstQuery,secondQuery)
+        .then((res) => {
+            res.forEach(doc => {
+                if (doc.exists) {
+                    postTempo = doc.data();
+                    Fire.shared.firestore.collection('users')
+                        .doc(postTempo.uid)
+                        .onSnapshot(documentSnapshot => {
+                            userTempo = documentSnapshot.data();
+                            this.setState({
+                                post: postTempo,
+                                userPost: userTempo,
+                                isLoading: false
+                            })
+                        });
+                }
+                else {
+                    // doc.data() will be undefined in this case
+                    console.log("No such document!");
+                }
+            })
         });
     }
     componentDidMount() {
         this.getRandomDatas();
     };
-    componentDidUpdate(){
-        this.getRandomDatas();
-    }
+    
     _displayLoading() {
         if (this.state.isLoading == true) {
             return (
@@ -63,29 +65,22 @@ class Home extends React.Component {
             )
         }
     }
-    _moreOptions = (post, user) => {
-        if (post.uid === user) {
-            console.log("Oui")
-        }
-        else {
-            console.log("Non")
-        }
-    }
     _toggleFavorite = (post) => {
         const action = { type: "TOGGLE_FAVORITE", value: post };
         this.props.dispatch(action)
         this.state.post;
-        this.componentDidUpdate();
     }
 
     _displayLike = (id) => {
         var size = 32;
+        var name= "hearto"
         const f = this.props.favoritesVideo.findIndex(item => item.id === id);
         if (this.props.favoritesVideo.findIndex(item => item.id === id) !== -1) {
             size = 38;
+            name="heart"
         }
         return (
-            <AntDesign name='heart' size={size} color="#E616E6" />
+            <AntDesign name={name} size={size} color='#E616E6' />
         )
 
     }
@@ -110,8 +105,7 @@ class Home extends React.Component {
                         <Video source={{ uri: post.video }}
                             rate={1.0}
                             volume={1.0}
-                            shouldPlay
-                            isLooping
+                            shouldPlay    
                             repeat={true}
                             useNativeControls={true}
                             onBuffer={this.onBuffer}                // Callback when remote video is buffering
@@ -136,7 +130,8 @@ class Home extends React.Component {
                                         showsVerticalScrollIndicator={false} />
                         </View>
                     </TouchableOpacity>
-                    <View style={styles.stylesContainer}>
+                        <View style={styles.stylesContainer}>
+                            
                         </View>
                     </View>
                     <View style={{ width: Dimensions.get('window').width }}>

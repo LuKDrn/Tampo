@@ -1,6 +1,7 @@
 import React from 'react'
-import {View, Text, StyleSheet, SafeAreaView, Platform} from 'react-native';
+import {View, Text, StyleSheet, SafeAreaView, Platform,Dimensions} from 'react-native';
 import { GiftedChat } from "react-native-gifted-chat";
+import { LinearGradient } from 'expo-linear-gradient';
 import Fire from "../Fire";
 
 export default class Chat extends React.Component {
@@ -30,24 +31,27 @@ export default class Chat extends React.Component {
     }
 
     render () {
-        const chat = <GiftedChat messages={this.state.messages} onSend={Fire.send} user={this.user} style={{color: "#FFF"}} />;
-
-        if (Platform.OS === 'android') {
-            return (
-                <KeyboardAvoidingView style={ styles.container } behavior="padding" keyboradVerticalOffset={30} enabled>
-                    {chat}
-                </KeyboardAvoidingView>
-            );
-        }
-        return <SafeAreaView style={ styles.container }>{chat}</SafeAreaView>;
-        
+        return(
+            <SafeAreaView style={styles.container}>
+                <LinearGradient
+                    colors={['#75EAEA', 'transparent']}
+                    style={{
+                        position: 'absolute',
+                        left: 0,
+                        right: 0,
+                        top: 0,
+                        height: Dimensions.get('window').height * 1.2,
+                    }}
+                />
+            </SafeAreaView>
+        )   
     }
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#14142d',
+        backgroundColor: '#E616E6',
         paddingVertical: 15
     },
 })

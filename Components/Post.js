@@ -169,14 +169,14 @@ export default class Post extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#14142d'
+        backgroundColor: '#14142d',
+        paddingVertical:125
     },
     header: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        paddingHorizontal: 32,
-        paddingVertical: 12,
+        padding: 32,
         shadowColor: "rgb(13, 16, 33)",
         shadowOffset: { height: 5 },
         shadowRadius: 15,

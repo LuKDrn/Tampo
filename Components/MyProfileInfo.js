@@ -154,7 +154,9 @@ const styles = StyleSheet.create({
     header: {
         position: 'absolute',
         left: "5%",
-        top: "3%"
+        top: "3%",
+        paddingTop: 26,
+        paddingHorizontal: 12
     },
     name: {
         fontSize: 32,

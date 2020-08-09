@@ -4,7 +4,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Image, Dimensions } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { Ionicons, FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons, FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from 'expo-linear-gradient';
 import * as firebase from 'firebase';
 import Fire from '../Fire';
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
-        backgroundColor: '#75EAEA'
+        backgroundColor: '#E616E6'
     },
     myProfileActions: {
         zIndex: 1,

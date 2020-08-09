@@ -114,7 +114,7 @@ const AppContainer = createStackNavigator (
                   title: "Chargement"
               }
           },
-          ProileParameter: {
+          ProfileParameter: {
               screen: ProfileParameter,
               navigationOptions: {
                   title: "Paramètres du profil"
